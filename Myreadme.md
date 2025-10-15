@@ -70,4 +70,32 @@ source /envs/mt_bench/bin/activate
 ```
 
 
+# main files to run
+
+- to train lora: `projects/lora_finetune.py` with `projects/run_lora.sh`
+- to evaluate lora: `projects/lora_eval.py` with `projects/lora_eval.sh`
+
+- to traning the routers: `projects/exmp_1.py` with `projects/run_one.sh`
+- to generate responses from moe models: `projects/model_eval.py` with `projects/moe_eval.sh`
+
+- to evaluate the responses: `projects/gpt4o_response_relevancy_evaluator.py` with `projects/gpt4o_eval.sh`
+
+```sh
+DATASET_DIR="/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/pku_saferlhf_processed"
+
+# Iterate over all files in the directory
+for file in "$DATASET_DIR"/*; do
+  if [[ -f "$file" && $(basename "$file") == test_* ]]; then
+    echo "$file"
+    # Extract the file name without the 'test_' prefix
+    file_name=$(basename "$file" | sed 's/^test_//')
+    
+    # Pass the file as test_data to moe_eval.sh
+    sbatch moe_eval.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/data/output/mistral_lora_moe_L_top2_20_samples_experts/checkpoint-40" "$file" "evals_output/moe_L_top2_20_samples_nodomains_experts_${file_name}"
+  fi
+done
+```
+
+
+
 
