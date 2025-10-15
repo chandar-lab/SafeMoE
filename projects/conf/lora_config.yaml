@@ -1,0 +1,50 @@
+# LoRA Fine-tuning Configuration
+experiment_name: "drug_abuse"
+seed: 42
+
+# Model configuration
+model:
+  base_model: "mistralai/Mistral-7B-v0.1"
+
+# LoRA configuration
+lora:
+  rank: 16
+  alpha: 32
+  dropout: 0.1
+  target_modules: [ "gate_proj", "up_proj", "down_proj"]
+  bias: "none"
+
+# Data configuration
+data:
+  dataset_path: "/home/mila/m/maryam.hashemzadeh/scratch/saftly/MoE-PEFT/datasets/beavertail/4_cleaned_330k_train_beaverTails_unsafe_drug_abuse_weapons_banned_substance.json"  # Replace with your local dataset path
+  test_size: 0.1  # Set to 0 if you don't want validation split
+
+# Training configuration
+training:
+  per_device_train_batch_size: 4
+  per_device_eval_batch_size: 4
+  gradient_accumulation_steps: 4
+  learning_rate: 2e-4
+  num_train_epochs: 3
+  max_steps: -1  # Set to positive number to limit steps instead of epochs
+  lr_scheduler_type: "cosine"
+  warmup_ratio: 0.03
+  logging_steps: 100
+  eval_steps: 2000
+  save_steps: 2000
+  # save_total_limit: 2
+  max_seq_length: 512
+  bf16: true
+  fp16: false
+  packing: false
+
+# Paths configuration
+paths:
+  lora_output_dir: "projects/loras/mistral-lora-${experiment_name}"
+
+# Hydra configuration
+hydra:
+  run:
+    dir: outputs/lora/${now:%Y-%m-%d}/${now:%H-%M-%S}
+  job:
+    name: ${experiment_name}

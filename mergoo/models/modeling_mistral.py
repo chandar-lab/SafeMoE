@@ -1123,6 +1123,7 @@ class MistralForCausalLM(MistralPreTrainedModel):
         output_attentions: Optional[bool] = None,
         output_hidden_states: Optional[bool] = None,
         return_dict: Optional[bool] = None,
+        logits_to_keep: Optional[int] = None,
     ) -> Union[Tuple, CausalLMOutputWithPast]:
         r"""
         Args:
@@ -1173,6 +1174,10 @@ class MistralForCausalLM(MistralPreTrainedModel):
         logits = self.lm_head(hidden_states)
         logits = logits.float()
 
+        # Handle logits_to_keep parameter for GRPO compatibility
+        if logits_to_keep is not None:
+            logits = logits[:, -logits_to_keep:, :]
+
         loss = None
         if labels is not None:
             # Shift so that tokens < n predict n
@@ -1206,7 +1211,17 @@ class MistralForCausalLM(MistralPreTrainedModel):
             if isinstance(past_key_values, Cache):
                 cache_length = past_key_values.get_seq_length()
                 past_length = past_key_values.seen_tokens
-                max_cache_length = past_key_values.get_max_length()
+                # max_cache_length = past_key_values.get_max_length()
+                # Handle different cache types and versions
+                if hasattr(past_key_values, 'get_max_length'):
+                    # Older versions of transformers
+                    max_cache_length = past_key_values.get_max_length()
+                elif hasattr(past_key_values, 'max_cache_len'):
+                    # Newer versions with max_cache_len attribute
+                    max_cache_length = past_key_values.max_cache_len
+                else:
+                    # Fallback for unknown cache types
+                    max_cache_length = None
             else:
                 cache_length = past_length = past_key_values[0][0].shape[2]
                 max_cache_length = None

@@ -1,0 +1,86 @@
+# Experiment configuration for GRPO training
+experiment_name: "mistral-economic-moe-grpo-2"
+seed: 42
+
+# Weights & Biases configuration
+wandb:
+  enabled: true
+  project: "mistral-moe-grpo-training"
+  run_name: null  # Will use experiment_name if null
+  tags: ["mistral", "moe", "economic", "grpo"]
+  notes: "Training Mistral MoE model for economic with GRPO and DeepSeek-style reward function"
+
+# Model configuration
+model:
+  model_type: "mistral"
+  num_experts_per_tok: 1
+  base_model: "mistralai/Mistral-7B-v0.1"
+  experts:
+    - expert_name: "adapter_1"
+      model_id: "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/mistral-lora-unsafe_economic"
+    - expert_name: "adapter_2"
+      model_id: "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/mistral-lora-fiqa"
+
+# Training configuration (for SFT fallback)
+training:
+  per_device_train_batch_size: 1
+  per_device_eval_batch_size: 1
+  learning_rate: 1e-5
+  save_total_limit: 1
+  num_train_epochs: 2
+  eval_steps: 5000
+  logging_strategy: "steps"
+  logging_steps: 25
+  gradient_accumulation_steps: 16
+  bf16: true
+  logging_first_step: true
+  evaluation_strategy: "steps"
+  save_strategy: "steps"
+  save_steps: 1000
+  load_best_model_at_end: true
+  metric_for_best_model: "eval_loss"
+  greater_is_better: false
+  max_seq_length: 512
+
+# SFT configuration (for mixed mode)
+sft:
+  num_train_epochs: 2  # Number of epochs for SFT phase in mixed mode
+
+# GRPO configuration (Group Relative Policy Optimization)
+grpo:
+  # enabled: true  # Enable GRPO training
+  mode: "mixed" # "mixed" or "GRPO" or "SFT"
+  per_device_train_batch_size: 1  # Batch size for GRPO training
+  per_device_eval_batch_size: 1
+  learning_rate: 1e-5  # Lower learning rate for GRPO
+  num_train_epochs: 10  # Fewer epochs for GRPO
+  num_generations: 4  # Number of completions to generate per prompt
+  max_completion_length: 64  # 256 Maximum length of generated completions
+  max_prompt_length: 128  # Maximum length of input prompts
+  temperature: 1.0  # Temperature for generation (increased for stability)
+  beta: 0.0  # KL divergence coefficient (0.0 = no KL penalty)
+
+# Llama Guard configuration for safety assessment
+llama_guard:
+  enabled: true  # Use actual Llama Guard model (if false, uses heuristic fallback)
+  model_id: "meta-llama/Llama-Guard-3-8B"  # Llama Guard model to use
+  device_map: "auto"  # Device mapping for Llama Guard model
+  torch_dtype: "bfloat16"  # Data type for Llama Guard model
+
+# Data configuration
+data:
+  dataset_name: "/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/polished_safe_data/train_safe_gpt4_qtype2_economic_crime_polished.json"
+  test_size: 0.1  # 90% train, 10% test + validation
+  test_valid_split: 0.7  # Split the 10% into 0.7 test, 0.3 valid
+
+# Paths configuration
+paths:
+  model_checkpoint: "data/mistral_lora_moe_economic_top1_grpo_2"
+  output_dir: "data/output/mistral_lora_moe_economic_top1_grpo_2"
+
+# Hydra configuration
+hydra:
+  run:
+    dir: outputs/grpo/${now:%Y-%m-%d}/${now:%H-%M-%S}
+  job:
+    name: ${experiment_name}

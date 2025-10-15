@@ -110,9 +110,9 @@ class ComposeLoraMoeExperts:
             self.config["adapter_configs"].append(adapter_config_)
             # check if all the lora are having same target modules
             if "router_layers" in self.config:
-                assert self.config["router_layers"] == list(
-                    adapter_config.target_modules
-                )
+                print(f"router_layers: {self.config.get('router_layers', 'NOT_SET')}")
+                print(f"target_modules: {list(adapter_config.target_modules)}")
+                assert sorted(self.config["router_layers"]) == sorted(list(adapter_config.target_modules))
             else:
                 self.config["router_layers"] = list(adapter_config.target_modules)
             # load the adapter

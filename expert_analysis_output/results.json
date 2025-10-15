@@ -1,0 +1,52 @@
+{
+  "layer_0": {
+    "distribution": {
+      "0": 0.542713567839196,
+      "1": 0.457286432160804
+    },
+    "entropy": 0.9947293316404531,
+    "entropy_ratio": 0.9947293316404531,
+    "total_tokens": 199,
+    "balance_status": "Very well balanced"
+  },
+  "layer_8": {
+    "distribution": {
+      "0": 0.6180904522613065,
+      "1": 0.38190954773869346
+    },
+    "entropy": 0.9593795191444577,
+    "entropy_ratio": 0.9593795191444577,
+    "total_tokens": 199,
+    "balance_status": "Very well balanced"
+  },
+  "layer_16": {
+    "distribution": {
+      "0": 0.5728643216080402,
+      "1": 0.4271356783919598
+    },
+    "entropy": 0.9846261723703563,
+    "entropy_ratio": 0.9846261723703563,
+    "total_tokens": 199,
+    "balance_status": "Very well balanced"
+  },
+  "layer_24": {
+    "distribution": {
+      "0": 0.5025125628140703,
+      "1": 0.49748743718592964
+    },
+    "entropy": 0.9999817845368459,
+    "entropy_ratio": 0.9999817845368459,
+    "total_tokens": 199,
+    "balance_status": "Very well balanced"
+  },
+  "layer_31": {
+    "distribution": {
+      "0": 0.5829145728643216,
+      "1": 0.41708542713567837
+    },
+    "entropy": 0.9800715138271004,
+    "entropy_ratio": 0.9800715138271004,
+    "total_tokens": 199,
+    "balance_status": "Very well balanced"
+  }
+}

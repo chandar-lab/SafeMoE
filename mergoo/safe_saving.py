@@ -6,7 +6,7 @@ import collections
 from transformers.pytorch_utils import id_tensor_storage
 from transformers.modeling_utils import (
     _add_variant,
-    shard_checkpoint,
+    # shard_checkpoint,
     safe_save_file,
     is_safetensors_available,
 )
@@ -16,6 +16,12 @@ from transformers.utils import (
     SAFE_WEIGHTS_INDEX_NAME,
     WEIGHTS_INDEX_NAME,
 )
+try:
+    from transformers.modeling_utils import shard_checkpoint
+    use_legacy_shard = True
+except ImportError:
+    from huggingface_hub import split_torch_state_dict_into_shards
+    use_legacy_shard = False
 
 
 def save_pretrained(
@@ -87,8 +93,7 @@ def save_pretrained(
             "`safe_serialization` requires the `safetensors library: `pip install safetensors`.")
 
     if os.path.isfile(save_directory):
-        raise f"Provided path ({save_directory}) should be a directory, not a file"
-        return
+        raise ValueError(f"Provided path ({save_directory}) should be a directory, not a file")
 
     os.makedirs(save_directory, exist_ok=True)
 
@@ -148,8 +153,30 @@ def save_pretrained(
     weights_name = SAFE_WEIGHTS_NAME if safe_serialization else WEIGHTS_NAME
     weights_name = _add_variant(weights_name, variant)
 
-    shards, index = shard_checkpoint(
-        state_dict, max_shard_size=max_shard_size, weights_name=weights_name)
+    # shards, index = shard_checkpoint(
+    #     state_dict, max_shard_size=max_shard_size, weights_name=weights_name)
+    # Then in the function:
+    if use_legacy_shard:
+        shards, index = shard_checkpoint(
+            state_dict, max_shard_size=max_shard_size, weights_name=weights_name)
+    else:
+        # New huggingface_hub function returns StateDictSplit object
+        state_dict_split = split_torch_state_dict_into_shards(
+            state_dict, max_shard_size=max_shard_size, filename_pattern=weights_name)
+
+        # Convert StateDictSplit to legacy format (shards, index)
+        shards = {}
+        for filename, tensor_names in state_dict_split.filename_to_tensors.items():
+            shards[filename] = {name: state_dict[name] for name in tensor_names}
+
+        # Create index in the expected format
+        if state_dict_split.is_sharded:
+            index = {
+                "metadata": state_dict_split.metadata,
+                "weight_map": state_dict_split.tensor_to_filename,
+            }
+        else:
+            index = None
 
     # Clean the folder from a previous save
     for filename in os.listdir(save_directory):

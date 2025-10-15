@@ -101,8 +101,11 @@ class LoRAMoeLayer(torch.nn.Module):
         self.lora_A = nn.ModuleDict({})
         self.lora_B = nn.ModuleDict({})
         self.base_layer = nn.Linear(self.in_features, self.out_features, bias=bias)
+        # self.gate = torch.nn.Linear(
+        #     config.hidden_size, config.num_experts, bias=False
+        # )  # device="mps:0")# TODO FIXME
         self.gate = torch.nn.Linear(
-            config.hidden_size, config.num_experts, bias=False
+            in_features, config.num_experts, bias=False
         )  # device="mps:0")# TODO FIXME
         self.active_adapters = []
         for ix, adapter_config in enumerate(self.config.adapter_configs):
@@ -124,12 +127,13 @@ class LoRAMoeLayer(torch.nn.Module):
 
         previous_dtype = x.dtype
         gate_logits = self.gate(x)  # b,s,N
+        gate_logits = F.softsign(gate_logits).to(previous_dtype)  #### I added this and comment softmax
         weights, selected_experts = torch.topk(
             gate_logits, self.num_experts_per_tok
         )  # b,s,n
-        weights = F.softmax(weights, dim=2, dtype=torch.float).to(
-            previous_dtype
-        )  # b,s,n
+        # weights = F.softmax(weights, dim=2, dtype=torch.float).to(
+        #     previous_dtype
+        # )  # b,s,n
         result = self.base_layer(x, *args, **kwargs)
 
         """TODO MAYBE
