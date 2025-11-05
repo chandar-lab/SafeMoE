@@ -1,5 +1,5 @@
 # Experiment configuration for Qwen2.5-1.5B MoE
-experiment_name: "qwen2.5_1.5B_lora_moe_router_training"
+experiment_name: "qwen2.5_1.5B_lora_moe_router_training_3"
 seed: 42
 
 # Weights & Biases configuration
@@ -43,7 +43,7 @@ training:
   per_device_train_batch_size: 1
   per_device_eval_batch_size: 1
   learning_rate: 1e-4
-  save_total_limit: 1
+  save_total_limit: 2
   num_train_epochs: 10
   eval_steps: 500
   logging_strategy: "steps"
@@ -86,8 +86,8 @@ data:
 
 # Paths configuration
 paths:
-  model_checkpoint: "data/qwen2.5_1.5B_lora_moe_checkpoint_2"
-  output_dir: "data/output/qwen2.5_1.5B_lora_moe_training_2"
+  model_checkpoint: "data/qwen2.5_1.5B_lora_moe_checkpoint_3"
+  output_dir: "data/output/qwen2.5_1.5B_lora_moe_training_3"
 
 # Hydra configuration
 hydra:

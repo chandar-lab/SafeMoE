@@ -7,6 +7,7 @@ import torch
 import os
 from transformers import StoppingCriteria, StoppingCriteriaList
 from mergoo.models.modeling_mistral import MistralForCausalLM
+from mergoo.models.modeling_qwen2 import Qwen2ForCausalLM
 from datasets import load_dataset
 import json
 import argparse
@@ -24,16 +25,16 @@ class StopOnToken(StoppingCriteria):
 
 parser = argparse.ArgumentParser(description="Evaluate MoE model on test data")
 parser.add_argument("--moe_path", type=str,
-                   default="Qwen/Qwen2.5-1.5B", #"Qwen/Qwen3-8B", #"mistralai/Mistral-7B-v0.1", #"/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/data/output/mistral_lora_moe_all_L_14apater_top2/checkpoint-1250",
+                   default="/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/data/output/qwen2.5_1.5B_lora_moe_training/checkpoint-500", #"Qwen/Qwen2.5-1.5B", #"Qwen/Qwen3-8B", #"mistralai/Mistral-7B-v0.1", #"/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/data/output/mistral_lora_moe_all_L_14apater_top2/checkpoint-1250",
                    help="Path to the LoRA adapter")
 parser.add_argument("--test_data_path", type=str,
                    default="/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/advbench_processed/advbench_data.json", #/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/harmbench_processed/harmbench_contextual_data.json, advbench_processed/advbench_data.json
                    help="Path to the test data JSON file")
 parser.add_argument("--output_json_path", type=str,
-                   default="evals_output/qwen2.5_1.5B_advbench_data.json",
+                   default="evals_output/qwen2.5_1.5B_moe_advbench_data.json",
                    help="Path to save the output JSON file")
 parser.add_argument("--moe", type=bool,
-                   default=False,
+                   default=True,
                    help="Whether the model is a MoE model")
 args = parser.parse_args()
 
@@ -78,17 +79,14 @@ tokenizer = AutoTokenizer.from_pretrained(finetuned_model_path, use_fast=True)
 
 if args.moe:
     # pass
-    model = MistralForCausalLM.from_pretrained(
-                finetuned_model_path,
-                torch_dtype=torch.bfloat16,
-            )
-    # model = Qwen3ForCausalLM.from_pretrained(
-    #         finetuned_model_path,
-    #         torch_dtype=torch.bfloat16,  # Match the dtype used in compose
-    #         attn_implementation="eager",
-    #         trust_remote_code=True,  # May be needed for custom model
-    #         device_map="auto",
-        # )
+    # model = MistralForCausalLM.from_pretrained(
+    #             finetuned_model_path,
+    #             torch_dtype=torch.bfloat16,
+    #         )
+    model = Qwen2ForCausalLM.from_pretrained(
+            finetuned_model_path,
+            dtype=torch.bfloat16,
+        )
 else:
     model = AutoModelForCausalLM.from_pretrained(
         finetuned_model_path,

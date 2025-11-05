@@ -44,6 +44,7 @@ from transformers.utils import (
     logging,
     replace_return_docstrings,
 )
+from transformers.generation import GenerationMixin  
 from transformers import Qwen2Config
 from mergoo.compose_layers import convert_linear_to_moe
 
@@ -1097,7 +1098,7 @@ class Qwen2Model(Qwen2PreTrainedModel):
         )
 
 
-class Qwen2ForCausalLM(Qwen2PreTrainedModel):
+class Qwen2ForCausalLM(Qwen2PreTrainedModel, GenerationMixin):
     _tied_weights_keys = ["lm_head.weight"]
 
     def __init__(self, config):
@@ -1228,7 +1229,7 @@ class Qwen2ForCausalLM(Qwen2PreTrainedModel):
         if past_key_values is not None:
             if isinstance(past_key_values, Cache):
                 cache_length = past_key_values.get_seq_length()
-                past_length = past_key_values.seen_tokens
+                past_length = past_key_values.seen_tokens if hasattr(past_key_values, 'seen_tokens') else cache_length
                 # Handle different cache types and versions
                 if hasattr(past_key_values, 'get_max_length'):
                     # Older versions of transformers

@@ -74,7 +74,7 @@ def main(cfg: DictConfig) -> None:
         "num_experts_per_tok": cfg.model.num_experts_per_tok,
         "base_model": cfg.model.base_model,
         "experts": OmegaConf.to_container(cfg.model.experts, resolve=True),
-        "router_layers": cfg.model.router_layers,
+        # "router_layers": cfg.model.router_layers,
     }
 
     # Create checkpoint
@@ -115,19 +115,19 @@ def main(cfg: DictConfig) -> None:
         n_weights += 1
     print(f"Total weights: {n_weights}, Router weights: {n_router_weights}")
     
-    # # Step 1: Freeze everything
-    # for param in model.parameters():
-    #     param.requires_grad = False
-    # print("✓ Froze all parameters")
+    # Step 1: Freeze everything
+    for param in model.parameters():
+        param.requires_grad = False
+    print("✓ Froze all parameters")
 
-    # # Step 2: Unfreeze only router gates
-    # router_params = []
-    # for name, param in model.named_parameters():
-    #     if 'gate.weight' in name:
-    #         param.requires_grad = True
-    #         router_params.append((name, param.numel()))
+    # Step 2: Unfreeze only router gates
+    router_params = []
+    for name, param in model.named_parameters():
+        if 'gate.weight' in name:
+            param.requires_grad = True
+            router_params.append((name, param.numel()))
 
-    # print(f"✓ Unfroze {len(router_params)} router gates")
+    print(f"✓ Unfroze {len(router_params)} router gates")
 
     # Step 3: Verify
     trainable_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
