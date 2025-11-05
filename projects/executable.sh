@@ -43,9 +43,9 @@
 
 ##################################################
 
-# sbatch run_lora.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/MoE-PEFT/datasets/beavertail/4_cleaned_330k_train_beaverTails_unsafe_drug_abuse_weapons_banned_substance.json" "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/mistral-lora-drug_abuse/"
+sbatch run_lora.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/MoE-PEFT/datasets/beavertail/4_cleaned_330k_train_beaverTails_unsafe_drug_abuse_weapons_banned_substance.json" "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/Qwen2.5-1.5B-lora-drug_abuse/"
 
-# sbatch run_lora.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/MoE-PEFT/datasets/pubmed/pubmed_qa/ori_pqau_instruction_response_10k_sample.json" "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/mistral-lora-pubmedqau/"
+sbatch run_lora.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/MoE-PEFT/datasets/pubmed/pubmed_qa/ori_pqau_instruction_response_10k_sample.json" "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/Qwen2.5-1.5B-lora-pubmedqau/"
 
 ###################################################
 # TRAIN LORA
@@ -58,7 +58,7 @@
 
 # sbatch run_lora.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/pku_saferlhf_processed/train_unsafe_environmental_damage.json" "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/mistral-lora-unsafe_environmental/"
 
-# sbatch run_lora.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/pku_saferlhf_processed/train_unsafe_cybercrime.json" "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/mistral-lora-unsafe_cybercrime/"
+sbatch run_lora.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/pku_saferlhf_processed/train_unsafe_cybercrime.json" "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/Qwen2.5-1.5B-lora-unsafe_cybercrime/"
 
 # sbatch run_lora.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/pku_saferlhf_processed/train_unsafe_economic_crime.json" "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/mistral-lora-unsafe_economic/"
 
@@ -74,7 +74,7 @@
 ### others
 # sbatch run_lora.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/LLukas22_fiqa/fiqa_train.json" "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/mistral-lora-fiqa/"
 
-# sbatch run_lora.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/cybersecurity_qa/cybersecurity_qa_train.json" "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/mistral-lora-cybersecurity_kaggle/"
+sbatch run_lora.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/cybersecurity_qa/cybersecurity_qa_train.json" "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/Qwen2.5-1.5B-lora-cybersecurity_kaggle/"
 
 # sbatch run_lora.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/mental_health/Amod_mental_health_counseling_conversations_train.json" "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/mistral-lora-mental_health/"
 

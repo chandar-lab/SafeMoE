@@ -13,7 +13,7 @@ Example:
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM, TrainingArguments
 from peft import LoraConfig, get_peft_model, TaskType
-from trl import SFTTrainer
+from trl import SFTTrainer, SFTConfig
 from datasets import load_dataset
 import os
 import wandb
@@ -25,19 +25,21 @@ def parse_arguments():
     parser.add_argument(
         "--dataset_path",
         type=str,
-        required=True,
+        # required=True,
+        default="/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/pku_saferlhf_processed/train_unsafe_sexual_content.json",
         help="Path to the dataset JSON file (must have 'instruction' and 'response' fields)"
     )
     parser.add_argument(
         "--output_dir",
         type=str,
-        required=True,
+        # required=True,
+        default="/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/qwen-3-8B-lora-unsafe_sexual_content/",
         help="Directory to save the LoRA adapter"
     )
     parser.add_argument(
         "--base_model",
         type=str,
-        default="mistralai/Mistral-7B-v0.1",
+        default="Qwen/Qwen3-8B", #"mistralai/Mistral-7B-v0.1",
         help="Base model to fine-tune (default: mistralai/Mistral-7B-v0.1)"
     )
     parser.add_argument(
@@ -49,7 +51,7 @@ def parse_arguments():
     parser.add_argument(
         "--run_name",
         type=str,
-        default=None,
+        default="run_1",
         help="Wandb run name (default: auto-generated from output_dir)"
     )
     return parser.parse_args()
@@ -155,18 +157,44 @@ def main():
     print(f"Training samples: {len(train_dataset)}")
     print(f"Evaluation samples: {len(eval_dataset)}")
 
-    # === FORMAT FUNCTION ===
+    # === CONVERT TO PROMPT-COMPLETION FORMAT ===
+    # For completion_only_loss to work, we need prompt-completion format
+    # The trainer will automatically compute loss only on the completion part
 
-    def formatting_func(example):
-        # Determine which key to use
+    # APPROACH 1: Prompt-Completion Format (CURRENT - RECOMMENDED)
+    # This separates prompt and completion into two fields
+    # The trainer automatically masks prompt tokens and computes loss only on completion
+    def format_to_prompt_completion(example):
+        # Determine which key to use for the question
         question_key = "prompt" if "prompt" in example else "instruction"
-        return [f"### Question: {q}\n### Answer: {a}" for q, a in zip(example[question_key], example["response"])]
-        # return [f"### Question: {q}\n### Answer: {a}" for q, a in zip(example["instruction"], example["response"])]
+        return {
+            "prompt": f"### Question: {example[question_key]}\n### Answer:",
+            "completion": f" {example['response']}"
+        }
+
+    train_dataset = train_dataset.map(format_to_prompt_completion, remove_columns=train_dataset.column_names)
+    eval_dataset = eval_dataset.map(format_to_prompt_completion, remove_columns=eval_dataset.column_names)
+
+    # APPROACH 2: Language Modeling Format (ALTERNATIVE - COMMENTED OUT)
+    # This creates a single "text" field with the full sequence
+    # You would need to set completion_only_loss=False in SFTConfig
+    # Loss would be computed on the entire sequence (both question and answer)
+    # def format_to_text(example):
+    #     question_key = "prompt" if "prompt" in example else "instruction"
+    #     text = f"### Question: {example[question_key]}\n### Answer: {example['response']}"
+    #     return {"text": text}
+    #
+    # train_dataset = train_dataset.map(format_to_text)
+    # eval_dataset = eval_dataset.map(format_to_text)
+    #
+    # # In SFTConfig, you would also need to add:
+    # # dataset_text_field="text",
+    # # completion_only_loss=False,
 
 
     # === TRAINING ARGS ===
 
-    training_args = TrainingArguments(
+    training_args = SFTConfig(
         output_dir=output_dir,
         per_device_train_batch_size=4,
         gradient_accumulation_steps=2,
@@ -174,24 +202,45 @@ def main():
         learning_rate=2e-4,
         logging_steps=10,
         save_steps=100,
-        evaluation_strategy="no",
+        # evaluation_strategy="no",
         bf16=torch.cuda.is_bf16_supported(),
         fp16=not torch.cuda.is_bf16_supported(),
         report_to="wandb",  # Enable wandb logging
         # run_name=run_name,
         logging_first_step=True,
+        max_length=512,
+        packing=False,
+        # APPROACH 1 (CURRENT): With prompt-completion format
+        # completion_only_loss=True automatically computes loss only on the completion part
+        completion_only_loss=True,
+
+        # APPROACH 2 (ALTERNATIVE - COMMENTED OUT): With language modeling format
+        # If using the text field approach (see APPROACH 2 above), use these settings:
+        # dataset_text_field="text",
+        # completion_only_loss=False,  # Compute loss on entire sequence
     )
+
+    # SFTConfig(
+    #     max_length=512,
+    #     packing=False,
+    #     # dataset_text_field="text",
+    #     # formatting_func=formatting_func,
+    # )
 
     # === TRAINER ===
 
+    # With prompt-completion format and completion_only_loss=True:
+    # - The model sees the full sequence: prompt + completion
+    # - Loss is computed ONLY on the completion tokens
+    # - The trainer automatically handles the masking
+
     trainer = SFTTrainer(
         model=model,
-        train_dataset=dataset,
-        tokenizer=tokenizer,
+        train_dataset=train_dataset,
+        eval_dataset=eval_dataset,
+        # tokenizer=tokenizer,
+        processing_class=tokenizer,
         args=training_args,
-        formatting_func=formatting_func,
-        max_seq_length=512,
-        packing=False
     )
 
 
@@ -440,5 +489,3 @@ if __name__ == "__main__":
 
 # if __name__ == "__main__":
 #     main()
-
-

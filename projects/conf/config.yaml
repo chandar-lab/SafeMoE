@@ -70,7 +70,7 @@ model:
     #   model_id: "predibase/customer_support_orders"
     # - expert_name: "adapter_4"
     #   model_id: "predibase/customer_support_payments"
-  # router_layers: [ "gate_proj", "up_proj", "down_proj"]
+  router_layers: [ "gate_proj", "up_proj", "down_proj"]
 
 # Training configuration
 training:
