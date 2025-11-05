@@ -8,8 +8,10 @@ from transformers.modeling_utils import (
     _add_variant,
     # shard_checkpoint,
     safe_save_file,
-    is_safetensors_available,
+    # is_safetensors_available,
 )
+from transformers.utils import is_safetensors_available
+
 from transformers.utils import (
     SAFE_WEIGHTS_NAME,
     WEIGHTS_NAME,
