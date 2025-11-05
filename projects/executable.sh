@@ -43,26 +43,26 @@
 
 ##################################################
 
-# sbatch run_lora.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/MoE-PEFT/datasets/beavertail/4_cleaned_330k_train_beaverTails_unsafe_drug_abuse_weapons_banned_substance.json" "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/mistral-lora-drug_abuse/"
+# sbatch run_lora.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/MoE-PEFT/datasets/beavertail/4_cleaned_330k_train_beaverTails_unsafe_drug_abuse_weapons_banned_substance.json" "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/qwen-3-8B-lora-drug_abuse/"
 
-# sbatch run_lora.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/MoE-PEFT/datasets/pubmed/pubmed_qa/ori_pqau_instruction_response_10k_sample.json" "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/mistral-lora-pubmedqau/"
+sbatch run_lora.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/MoE-PEFT/datasets/pubmed/pubmed_qa/ori_pqau_instruction_response_10k_sample.json" "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/qwen-3-8B-lora-pubmedqau/"
 
 ###################################################
 # TRAIN LORA
 ###################################################
 ### PKU safetyRLHF
 
-# sbatch run_lora.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/pku_saferlhf_processed/train_unsafe_psychological_harm.json" "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/mistral-lora-unsafe_psychological/"
+sbatch run_lora.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/pku_saferlhf_processed/train_unsafe_psychological_harm.json" "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/qwen-3-8B-lora-unsafe_psychological/"
 
-# sbatch run_lora.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/pku_saferlhf_processed/train_unsafe_physical_harm.json" "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/mistral-lora-unsafe_physical/"
+sbatch run_lora.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/pku_saferlhf_processed/train_unsafe_physical_harm.json" "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/qwen-3-8B-lora-unsafe_physical/"
 
-# sbatch run_lora.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/pku_saferlhf_processed/train_unsafe_environmental_damage.json" "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/mistral-lora-unsafe_environmental/"
+sbatch run_lora.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/pku_saferlhf_processed/train_unsafe_environmental_damage.json" "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/qwen-3-8B-lora-unsafe_environmental/"
 
-# sbatch run_lora.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/pku_saferlhf_processed/train_unsafe_cybercrime.json" "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/mistral-lora-unsafe_cybercrime/"
+sbatch run_lora.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/pku_saferlhf_processed/train_unsafe_cybercrime.json" "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/qwen-3-8B-lora-unsafe_cybercrime/"
 
-# sbatch run_lora.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/pku_saferlhf_processed/train_unsafe_economic_crime.json" "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/mistral-lora-unsafe_economic/"
+sbatch run_lora.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/pku_saferlhf_processed/train_unsafe_economic_crime.json" "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/qwen-3-8B-lora-unsafe_economic/"
 
-# sbatch run_lora.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/MoE-PEFT/datasets/beavertail/4_cleaned_330k_train_beaverTails_safe_gpt4_qtype4_drug_abuse_weapons_banned_substance.json" "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/mistral-lora-safe_drug_abuse_weapons_banned_substance/"
+sbatch run_lora.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/MoE-PEFT/datasets/beavertail/4_cleaned_330k_train_beaverTails_safe_gpt4_qtype4_drug_abuse_weapons_banned_substance.json" "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/qwen-3-8Bl-lora-safe_drug_abuse_weapons_banned_substance/"
 
 ### camel
 # sbatch run_lora.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/camel_datasets_processed/biology_train.json" "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/mistral-lora-biology_camel/"
@@ -72,36 +72,36 @@
 # sbatch run_lora.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/camel_datasets_processed/physics_train.json" "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/mistral-lora-physics_camel/"
 
 ### others
-# sbatch run_lora.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/LLukas22_fiqa/fiqa_train.json" "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/mistral-lora-fiqa/"
+sbatch run_lora.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/LLukas22_fiqa/fiqa_train.json" "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/qwen-3-8B-lora-fiqa/"
 
-# sbatch run_lora.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/cybersecurity_qa/cybersecurity_qa_train.json" "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/mistral-lora-cybersecurity_kaggle/"
+sbatch run_lora.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/cybersecurity_qa/cybersecurity_qa_train.json" "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/qwen-3-8B-lora-cybersecurity_kaggle/"
 
-# sbatch run_lora.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/mental_health/Amod_mental_health_counseling_conversations_train.json" "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/mistral-lora-mental_health/"
+sbatch run_lora.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/mental_health/Amod_mental_health_counseling_conversations_train.json" "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/qwen-3-8B-lora-mental_health/"
 
 ### other unsafe
-# sbatch run_lora.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/pku_saferlhf_processed/train_unsafe_copyright_issues.json" "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/mistral-lora-unsafe_copyright_issues/"
+sbatch run_lora.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/pku_saferlhf_processed/train_unsafe_copyright_issues.json" "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/qwen-3-8B-lora-unsafe_copyright_issues/"
 
-# sbatch run_lora.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/pku_saferlhf_processed/train_unsafe_discriminatory_behavior.json" "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/mistral-lora-unsafe_discriminatory_behavior/"
+sbatch run_lora.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/pku_saferlhf_processed/train_unsafe_discriminatory_behavior.json" "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/qwen-3-8B-lora-unsafe_discriminatory_behavior/"
 
-# sbatch run_lora.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/pku_saferlhf_processed/train_unsafe_disrupting_public_order.json" "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/mistral-lora-unsafe_disrupting_public_order/"
+sbatch run_lora.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/pku_saferlhf_processed/train_unsafe_disrupting_public_order.json" "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/qwen-3-8B-lora-unsafe_disrupting_public_order/"
 
-# sbatch run_lora.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/pku_saferlhf_processed/train_unsafe_endangering_national_security.json" "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/mistral-lora-unsafe_endangering_national_security/"
+sbatch run_lora.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/pku_saferlhf_processed/train_unsafe_endangering_national_security.json" "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/qwen-3-8B-lora-unsafe_endangering_national_security/"
 
-# sbatch run_lora.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/pku_saferlhf_processed/train_unsafe_endangering_public_health.json" "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/mistral-lora-unsafe_endangering_public_health/"
+sbatch run_lora.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/pku_saferlhf_processed/train_unsafe_endangering_public_health.json" "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/qwen-3-8B-lora-unsafe_endangering_public_health/"
 
-# sbatch run_lora.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/pku_saferlhf_processed/train_unsafe_human_trafficking.json" "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/mistral-lora-unsafe_human_trafficking/"
+sbatch run_lora.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/pku_saferlhf_processed/train_unsafe_human_trafficking.json" "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/qwen-3-8B-lora-unsafe_human_trafficking/"
 
-# sbatch run_lora.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/pku_saferlhf_processed/train_unsafe_insulting_behavior.json" "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/mistral-lora-unsafe_insulting_behavior/"
+sbatch run_lora.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/pku_saferlhf_processed/train_unsafe_insulting_behavior.json" "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/qwen-3-8B-lora-unsafe_insulting_behavior/"
 
-# sbatch run_lora.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/pku_saferlhf_processed/train_unsafe_mental_manipulation.json" "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/mistral-lora-unsafe_mental_manipulation/"
+sbatch run_lora.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/pku_saferlhf_processed/train_unsafe_mental_manipulation.json" "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/qwen-3-8B-lora-unsafe_mental_manipulation/"
 
-# sbatch run_lora.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/pku_saferlhf_processed/train_unsafe_privacy_violation.json" "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/mistral-lora-unsafe_privacy_violation/"
+sbatch run_lora.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/pku_saferlhf_processed/train_unsafe_privacy_violation.json" "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/qwen-3-8B-lora-unsafe_privacy_violation/"
 
-# sbatch run_lora.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/pku_saferlhf_processed/train_unsafe_sexual_content.json" "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/mistral-lora-unsafe_sexual_content/"
+sbatch run_lora.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/pku_saferlhf_processed/train_unsafe_sexual_content.json" "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/qwen-3-8B-lora-unsafe_sexual_content/"
 
-# sbatch run_lora.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/pku_saferlhf_processed/train_unsafe_violence.json" "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/mistral-lora-unsafe_violence/"
+sbatch run_lora.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/pku_saferlhf_processed/train_unsafe_violence.json" "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/qwen-3-8B-lora-unsafe_violence/"
 
-# sbatch run_lora.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/pku_saferlhf_processed/train_unsafe_white_collar_crime.json" "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/mistral-lora-unsafe_white_collar_crime/"
+sbatch run_lora.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/pku_saferlhf_processed/train_unsafe_white_collar_crime.json" "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/qwen-3-8B-lora-unsafe_white_collar_crime/"
 
 ### safe adapters
 
@@ -244,42 +244,42 @@
 ###################################################
 ## for generatting text
 ###################################################
-DATASET_DIR="/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/pku_saferlhf_processed"
+# DATASET_DIR="/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/pku_saferlhf_processed"
 
-# Iterate over all files in the directory
-for file in "$DATASET_DIR"/*; do
-  if [[ -f "$file" && $(basename "$file") == test_* ]]; then
-    echo "$file"
-    # Extract the file name without the 'test_' prefix
-    file_name=$(basename "$file" | sed 's/^test_//')
+# # Iterate over all files in the directory
+# for file in "$DATASET_DIR"/*; do
+#   if [[ -f "$file" && $(basename "$file") == test_* ]]; then
+#     echo "$file"
+#     # Extract the file name without the 'test_' prefix
+#     file_name=$(basename "$file" | sed 's/^test_//')
     
-    # Pass the file as test_data to moe_eval.sh
-    sbatch moe_eval.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/data/output/mistral_lora_moe_L_top2_20_samples_experts/checkpoint-40" "$file" "evals_output/moe_L_top2_20_samples_nodomains_experts_${file_name}"
-    sbatch moe_eval.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/data/output/mistral_lora_moe_L_top2_50_samples_experts/checkpoint-110" "$file" "evals_output/moe_L_top2_50_samples_nodomains_experts_${file_name}"
-    sbatch moe_eval.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/data/output/mistral_lora_moe_L_top2_100_samples_experts/checkpoint-220" "$file" "evals_output/moe_L_top2_100_samples_nodomains_experts_${file_name}"
-    sbatch moe_eval.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/data/output/mistral_lora_moe_8adapters_top2_20_samples_experts/checkpoint-40" "$file" "evals_output/moe_8adapters_top2_20_samples_nodomains_experts_${file_name}"
-    sbatch moe_eval.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/data/output/mistral_lora_moe_8adapters_top2_50_samples_experts/checkpoint-110" "$file" "evals_output/moe_8adapters_top2_50_samples_nodomains_experts_${file_name}"
-    sbatch moe_eval.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/data/output/mistral_lora_moe_8adapters_top2_100_samples_experts/checkpoint-220" "$file" "evals_output/moe_8adapters_top2_100_samples_nodomains_experts_${file_name}"
-    # sbatch moe_eval.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/data/output/mistral_lora_moe_XL_top2_100_samples_nodomains_experts/checkpoint-220" "$file" "evals_output/moe_XL_top2_100_samples_nodomains_experts_${file_name}"
-    # sbatch moe_eval.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/data/output/mistral_lora_moe_XL_top2_20_samples/checkpoint-40" "$file" "evals_output/moe_XL_top2_20samples_${file_name}"
-    # sbatch moe_eval.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/data/output/mistral_lora_moe_XL_top2_100_2samples/checkpoint-220" "$file" "evals_output/moe_XL_top2_100samples_${file_name}"
-    # sbatch moe_eval.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/data/output/mistral_lora_moe_XL_top2_50samples/checkpoint-110" "$file" "evals_output/moe_XL_top2_50samples_${file_name}" 
-    # sbatch moe_eval.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/data/output/mistral_lora_moe_XL_top2_200samples/checkpoint-450" "$file" "evals_output/moe_XL_top2_200samples_${file_name}"
-    # sbatch moe_eval.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/data/output/mistral_lora_moe_all_top2/checkpoint-1250" "$file" "evals_output/moe_model_all_8apater_top2_${file_name}"
-    # sbatch moe_eval.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/data/output/mistral_lora_moe_4domainexperts_top2_top2/checkpoint-1250" "$file" "evals_output/moe_model_4domainexperts_top2_${file_name}"
-    # sbatch moe_eval.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/data/output/mistral_sft_all_safe_data_2/checkpoint-310" "$file" "evals_output/mistral_sft_model_all_safe_data500sample_2_${file_name}"
-    # sbatch moe_eval.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/data/output/mistral_sft_all_safe_data_3_200sample/checkpoint-120" "$file" "evals_output/mistral_sft_model_all_safe_data200sample_3_${file_name}"
-    # sbatch moe_eval.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/data/output/mistral_sft_all_safe_data_3_20sample/checkpoint-40" "$file" "evals_output/mistral_sft_model_all_safe_data20sample_4_${file_name}"
-    # sbatch moe_eval.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/data/output/mistral_sft_all_safe_data_5_20sample_nooverlap/checkpoint-180" "$file" "evals_output/mistral_sft_model_all_safe_5_20sample_nooverlap_${file_name}"
-    # sbatch moe_eval.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/data/output/mistral_sft_all_safe_data_8_50sample_nooverlap/checkpoint-110" "$file" "evals_output/mistral_sft_model_all_safe_8_50sample_nooverlap_${file_name}"
-    # sbatch moe_eval.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/data/output/mistral_sft_all_safe_data_9_100sample_nooverlap/checkpoint-220" "$file" "evals_output/mistral_sft_model_all_safe_9_100sample_nooverlap_${file_name}"
-    # sbatch moe_eval.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/data/output/mistral_sft_all_safe_data_9_100sample_nooverlap_30epoch_lr-3/checkpoint-660" "$file" "evals_output/mistral_sft_model_all_safe_9_100sample_overlap_30epoch_lr-3_${file_name}"
-    # sbatch moe_eval.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/data/output/mistral_sft_all_safe_data_10_500sample_nooverlap_30epoch/checkpoint-3360" "$file" "evals_output/mistral_sft_model_all_safe_10_500sample_overlap_30epoch_${file_name}"
-    # sbatch moe_eval.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/data/output/mistral_sft_all_safe_data_10_500sample_nooverlap_10epoch/checkpoint-1120" "$file" "evals_output/mistral_sft_model_all_safe_10_500sample_overlap_10epoch_${file_name}"
-    # sbatch moe_eval.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/data/output/mistral_sft_all_safe_data_11_200sample_nooverlap_10epoch/checkpoint-450" "$file" "evals_output/mistral_sft_model_all_safe_11_200sample_overlap_10epoch_${file_name}"
-    # sbatch moe_eval.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/data/output/mistral_sft_all_safe_data_11_200sample_nooverlap_30epoch/checkpoint-1350" "$file" "evals_output/mistral_sft_model_all_safe_11_200sample_overlap_30epoch_${file_name}"
-  fi
-done
+#     # Pass the file as test_data to moe_eval.sh
+#     sbatch moe_eval.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/data/output/mistral_lora_moe_L_top2_20_samples_experts/checkpoint-40" "$file" "evals_output/moe_L_top2_20_samples_nodomains_experts_${file_name}"
+#     sbatch moe_eval.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/data/output/mistral_lora_moe_L_top2_50_samples_experts/checkpoint-110" "$file" "evals_output/moe_L_top2_50_samples_nodomains_experts_${file_name}"
+#     sbatch moe_eval.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/data/output/mistral_lora_moe_L_top2_100_samples_experts/checkpoint-220" "$file" "evals_output/moe_L_top2_100_samples_nodomains_experts_${file_name}"
+#     sbatch moe_eval.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/data/output/mistral_lora_moe_8adapters_top2_20_samples_experts/checkpoint-40" "$file" "evals_output/moe_8adapters_top2_20_samples_nodomains_experts_${file_name}"
+#     sbatch moe_eval.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/data/output/mistral_lora_moe_8adapters_top2_50_samples_experts/checkpoint-110" "$file" "evals_output/moe_8adapters_top2_50_samples_nodomains_experts_${file_name}"
+#     sbatch moe_eval.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/data/output/mistral_lora_moe_8adapters_top2_100_samples_experts/checkpoint-220" "$file" "evals_output/moe_8adapters_top2_100_samples_nodomains_experts_${file_name}"
+#     # sbatch moe_eval.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/data/output/mistral_lora_moe_XL_top2_100_samples_nodomains_experts/checkpoint-220" "$file" "evals_output/moe_XL_top2_100_samples_nodomains_experts_${file_name}"
+#     # sbatch moe_eval.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/data/output/mistral_lora_moe_XL_top2_20_samples/checkpoint-40" "$file" "evals_output/moe_XL_top2_20samples_${file_name}"
+#     # sbatch moe_eval.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/data/output/mistral_lora_moe_XL_top2_100_2samples/checkpoint-220" "$file" "evals_output/moe_XL_top2_100samples_${file_name}"
+#     # sbatch moe_eval.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/data/output/mistral_lora_moe_XL_top2_50samples/checkpoint-110" "$file" "evals_output/moe_XL_top2_50samples_${file_name}" 
+#     # sbatch moe_eval.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/data/output/mistral_lora_moe_XL_top2_200samples/checkpoint-450" "$file" "evals_output/moe_XL_top2_200samples_${file_name}"
+#     # sbatch moe_eval.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/data/output/mistral_lora_moe_all_top2/checkpoint-1250" "$file" "evals_output/moe_model_all_8apater_top2_${file_name}"
+#     # sbatch moe_eval.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/data/output/mistral_lora_moe_4domainexperts_top2_top2/checkpoint-1250" "$file" "evals_output/moe_model_4domainexperts_top2_${file_name}"
+#     # sbatch moe_eval.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/data/output/mistral_sft_all_safe_data_2/checkpoint-310" "$file" "evals_output/mistral_sft_model_all_safe_data500sample_2_${file_name}"
+#     # sbatch moe_eval.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/data/output/mistral_sft_all_safe_data_3_200sample/checkpoint-120" "$file" "evals_output/mistral_sft_model_all_safe_data200sample_3_${file_name}"
+#     # sbatch moe_eval.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/data/output/mistral_sft_all_safe_data_3_20sample/checkpoint-40" "$file" "evals_output/mistral_sft_model_all_safe_data20sample_4_${file_name}"
+#     # sbatch moe_eval.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/data/output/mistral_sft_all_safe_data_5_20sample_nooverlap/checkpoint-180" "$file" "evals_output/mistral_sft_model_all_safe_5_20sample_nooverlap_${file_name}"
+#     # sbatch moe_eval.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/data/output/mistral_sft_all_safe_data_8_50sample_nooverlap/checkpoint-110" "$file" "evals_output/mistral_sft_model_all_safe_8_50sample_nooverlap_${file_name}"
+#     # sbatch moe_eval.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/data/output/mistral_sft_all_safe_data_9_100sample_nooverlap/checkpoint-220" "$file" "evals_output/mistral_sft_model_all_safe_9_100sample_nooverlap_${file_name}"
+#     # sbatch moe_eval.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/data/output/mistral_sft_all_safe_data_9_100sample_nooverlap_30epoch_lr-3/checkpoint-660" "$file" "evals_output/mistral_sft_model_all_safe_9_100sample_overlap_30epoch_lr-3_${file_name}"
+#     # sbatch moe_eval.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/data/output/mistral_sft_all_safe_data_10_500sample_nooverlap_30epoch/checkpoint-3360" "$file" "evals_output/mistral_sft_model_all_safe_10_500sample_overlap_30epoch_${file_name}"
+#     # sbatch moe_eval.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/data/output/mistral_sft_all_safe_data_10_500sample_nooverlap_10epoch/checkpoint-1120" "$file" "evals_output/mistral_sft_model_all_safe_10_500sample_overlap_10epoch_${file_name}"
+#     # sbatch moe_eval.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/data/output/mistral_sft_all_safe_data_11_200sample_nooverlap_10epoch/checkpoint-450" "$file" "evals_output/mistral_sft_model_all_safe_11_200sample_overlap_10epoch_${file_name}"
+#     # sbatch moe_eval.sh "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/data/output/mistral_sft_all_safe_data_11_200sample_nooverlap_30epoch/checkpoint-1350" "$file" "evals_output/mistral_sft_model_all_safe_11_200sample_overlap_30epoch_${file_name}"
+#   fi
+# done
 
 
 # file='/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/advbench_processed/advbench_data.json'

@@ -4,12 +4,36 @@ import json
 import torch
 import collections
 from transformers.pytorch_utils import id_tensor_storage
-from transformers.modeling_utils import (
+# from transformers.modeling_utils import (
+#     _add_variant,
+#     # shard_checkpoint,
+#     safe_save_file,
+#     is_safetensors_available,
+# )
+try:
+    from transformers.utils import (
     _add_variant,
     # shard_checkpoint,
     safe_save_file,
     is_safetensors_available,
 )
+except ImportError:
+    try:
+        from transformers.modeling_utils import (
+    _add_variant,
+    # shard_checkpoint,
+    safe_save_file,
+    is_safetensors_available,
+)
+    except ImportError:
+        # Fallback: check if safetensors is installed
+        def is_safetensors_available():
+            try:
+                import safetensors
+                return True
+            except ImportError:
+                return False
+            
 from transformers.utils import (
     SAFE_WEIGHTS_NAME,
     WEIGHTS_NAME,

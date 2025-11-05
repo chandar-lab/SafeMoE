@@ -3,14 +3,14 @@
 #SBATCH --output=out/%A%a.out
 #SBATCH --error=out/%A%a.err
 #SBATCH --cpus-per-task=16 
-#SBATCH --gres=gpu:a100l:4
-# SBATCH --gres=gpu:l40s:4                          
+# SBATCH --gres=gpu:a100l:4
+#SBATCH --gres=gpu:l40s:1                          
 # SBATCH --gres=gpu:2
 #SBATCH --mem=128G 
 #SBATCH --time=03:00:00
 # SBATCH --partition=main
 # SBATCH --constraint='ampere'
-#SBATCH --partition=short-unkillable
+# SBATCH --partition=short-unkillable
 # SBATCH --signal=USR1@90  # Preemption warning 90s before timeout
 # SBATCH --signal=B:TERM@90
 
@@ -24,12 +24,14 @@
 
 module load python/3.10
 module load cuda/12.1.1
-source /home/mila/m/maryam.hashemzadeh/projects/envs/mergoo_3/bin/activate
+# source /home/mila/m/maryam.hashemzadeh/projects/envs/mergoo_3/bin/activate
+source /home/mila/m/maryam.hashemzadeh/projects/envs/mergoo_update/bin/activate
 
 path=$1
 dir=$2
 
-python lora_finetune.py --dataset_path $path --output_dir $dir
+# python lora_finetune.py --dataset_path $path --output_dir $dir --base_model "meta-llama/Meta-Llama-3-8B"
+python lora_finetune.py --dataset_path $path --output_dir $dir --base_model "Qwen/Qwen3-8B"
 
 # python exmp_1.py
 

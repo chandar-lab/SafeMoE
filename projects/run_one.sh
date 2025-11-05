@@ -26,6 +26,7 @@ export HYDRA_FULL_ERROR=1
 module load python/3.10
 module load cuda/12.1.1
 source /home/mila/m/maryam.hashemzadeh/projects/envs/mergoo_3/bin/activate
+source /home/mila/m/maryam.hashemzadeh/projects/envs/mergoo_update/bin/activate
 
 TASK_NAME=$1
 MODEL=$2
@@ -55,8 +56,13 @@ MODEL=$2
 # Uncomment below to use DeepSpeed Stage 2
 # echo "Launching training with DeepSpeed Stage 2..."
 
-accelerate launch   --deepspeed_config_file "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/conf/zero_stage_2.json"   exmp_1.py
+# accelerate launch   --deepspeed_config_file "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/conf/zero_stage_2.json"   exmp_1.py
 
+accelerate launch   --deepspeed_config_file "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/conf/zero_stage_2.json"   exmp_1_qwen.py
+accelerate launch   --deepspeed_config_file "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/conf/zero_stage_2_batch.json"   exmp_1_qwen.py
+
+
+accelerate launch   --deepspeed_config_file "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/conf/zero_stage_2.json" 
 # accelerate launch   --deepspeed_config_file "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/conf/zero_stage_2.json"   sft_training.py
 
 # python exmp_1.py

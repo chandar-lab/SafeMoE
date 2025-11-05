@@ -70,13 +70,13 @@ model:
     #   model_id: "predibase/customer_support_orders"
     # - expert_name: "adapter_4"
     #   model_id: "predibase/customer_support_payments"
-  # router_layers: [ "gate_proj", "up_proj", "down_proj"]
+  router_layers: [ "gate_proj", "up_proj", "down_proj"]
 
 # Training configuration
 training:
   per_device_train_batch_size: 1
   per_device_eval_batch_size: 1
-  learning_rate: 1e-4
+  learning_rate: 1e-2
   save_total_limit: 1
   num_train_epochs: 10
   eval_steps: 5000

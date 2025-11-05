@@ -376,6 +376,14 @@ def main(cfg: DictConfig) -> None:
             torch_dtype=torch.bfloat16,
         )
 
+    # Enable gradient checkpointing to reduce memory usage (if configured)
+    use_gradient_checkpointing = cfg.training.get('gradient_checkpointing', False)
+    if use_gradient_checkpointing and hasattr(model, 'gradient_checkpointing_enable'):
+        model.gradient_checkpointing_enable()
+        print("✓ Gradient checkpointing enabled - this will reduce memory usage")
+    elif use_gradient_checkpointing:
+        print("⚠ Gradient checkpointing requested but not supported by this model")
+
     # Train only router (gating) layers
     n_weights, n_router_weights = 0, 0
     for name, weight in model.named_parameters():

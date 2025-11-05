@@ -10,7 +10,7 @@ from mergoo.models.modeling_mistral import MistralForCausalLM
 from datasets import load_dataset
 import json
 import argparse
-
+from mergoo.models.modeling_qwen3 import Qwen3ForCausalLM
 
 
 class StopOnToken(StoppingCriteria):
@@ -24,16 +24,16 @@ class StopOnToken(StoppingCriteria):
 
 parser = argparse.ArgumentParser(description="Evaluate MoE model on test data")
 parser.add_argument("--moe_path", type=str,
-                   default="mistralai/Mistral-7B-v0.1", #"/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/data/output/mistral_lora_moe_all_L_14apater_top2/checkpoint-1250",
+                   default="/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/data/output/qwen3-8B_lora_moe_8_top2_200_samples_experts_1/checkpoint-1250", #"Qwen/Qwen3-8B", #"mistralai/Mistral-7B-v0.1", #"/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/data/output/mistral_lora_moe_all_L_14apater_top2/checkpoint-1250",
                    help="Path to the LoRA adapter")
 parser.add_argument("--test_data_path", type=str,
                    default="/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/advbench_processed/advbench_data.json", #/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/harmbench_processed/harmbench_contextual_data.json, advbench_processed/advbench_data.json
                    help="Path to the test data JSON file")
 parser.add_argument("--output_json_path", type=str,
-                   default="evals_output/mistral_advbench_data.json",
+                   default="evals_output/qwen3_moe_advbench_data.json",
                    help="Path to save the output JSON file")
 parser.add_argument("--moe", type=bool,
-                   default=False,
+                   default=True,
                    help="Whether the model is a MoE model")
 args = parser.parse_args()
 
@@ -77,10 +77,18 @@ tokenizer = AutoTokenizer.from_pretrained(finetuned_model_path, use_fast=True)
 
 
 if args.moe:
-    model = MistralForCausalLM.from_pretrained(
-                finetuned_model_path,
-                torch_dtype=torch.bfloat16,
-            )
+    # pass
+    # model = MistralForCausalLM.from_pretrained(
+    #             finetuned_model_path,
+    #             torch_dtype=torch.bfloat16,
+    #         )
+    model = Qwen3ForCausalLM.from_pretrained(
+            finetuned_model_path,
+            torch_dtype=torch.bfloat16,  # Match the dtype used in compose
+            attn_implementation="eager",
+            trust_remote_code=True,  # May be needed for custom model
+            device_map="auto",
+        )
 else:
     model = AutoModelForCausalLM.from_pretrained(
         finetuned_model_path,
@@ -119,7 +127,7 @@ results = []
 
 # for example in test_data[:10]:
 for i, example in enumerate(test_data):
-    if i > 100:  # Limit to first 500 examples for testing
+    if i > 10:  # Limit to first 500 examples for testing
         # continue
         break
     # Handle both "instruction" and "prompt" fields
@@ -159,7 +167,7 @@ for i, example in enumerate(test_data):
 
     results.append(result_item)
     # batch_results.append(result_item)
-    # print(f" *********** Instruction: {instruction}\nResponse: {response}\n")
+    print(f" *********** Instruction: {instruction}\nResponse: {response}\n")
 
     # --- Batch saving: Save accumulated results every BATCH_SIZE examples ---
     if (i + 1) % BATCH_SIZE == 0:

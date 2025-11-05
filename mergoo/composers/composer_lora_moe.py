@@ -1,5 +1,6 @@
 import os
 import json
+import math
 import torch
 import gc
 from tqdm import tqdm
@@ -121,6 +122,56 @@ class ComposeLoraMoeExperts:
         if hasattr(model, "_tied_weights_keys"):
             self._tied_weights_keys.extend(model._tied_weights_keys)
 
+        # Check and fix corrupted weights BEFORE extracting state_dict
+        print("\nChecking for corrupted weights in model...")
+        nan_count = 0
+        inf_count = 0
+        fixed_count = 0
+
+        for name, param in model.named_parameters():
+            has_nan = torch.isnan(param).any()
+            has_inf = torch.isinf(param).any()
+
+            if has_nan or has_inf:
+                if has_nan:
+                    nan_count += 1
+                if has_inf:
+                    inf_count += 1
+
+                # Fix corrupted weights IN PLACE
+                with torch.no_grad():
+                    if 'norm' in name.lower() and 'weight' in name:
+                        # RMSNorm/LayerNorm weights should be 1.0
+                        param.fill_(1.0)
+                        fixed_count += 1
+                        print(f"  ✓ Fixed {name}: RMSNorm -> 1.0")
+                    elif 'lora_A' in name:
+                        # LoRA A weights - reinitialize with kaiming
+                        torch.nn.init.kaiming_uniform_(param, a=math.sqrt(5))
+                        fixed_count += 1
+                        print(f"  ✓ Fixed {name}: LoRA_A -> Kaiming")
+                    elif 'lora_B' in name:
+                        # LoRA B weights - zeros
+                        param.zero_()
+                        fixed_count += 1
+                        print(f"  ✓ Fixed {name}: LoRA_B -> Zeros")
+                    else:
+                        # Other weights - reinitialize with xavier
+                        if param.dim() >= 2:
+                            torch.nn.init.xavier_uniform_(param)
+                            fixed_count += 1
+                            print(f"  ✓ Fixed {name}: Other -> Xavier")
+                        else:
+                            param.zero_()
+                            fixed_count += 1
+                            print(f"  ✓ Fixed {name}: Other -> Zeros")
+
+        if nan_count > 0 or inf_count > 0:
+            print(f"\n⚠️  Found {nan_count} NaN and {inf_count} Inf weights in model")
+            print(f"✓ Fixed {fixed_count} corrupted weights")
+        else:
+            print("✓ No corrupted weights found in model")
+
         self.state_dict = model.state_dict()
 
         count_router_layers = 0
@@ -159,8 +210,19 @@ class ComposeLoraMoeExperts:
         config = self.model_config
         config["num_experts"] = len(self.config["experts"])
         config["num_experts_per_tok"] = self.config["num_experts_per_tok"]
-        config["router_layers"] = self.config["router_layers"]
-        config["adapter_configs"] = self.config["adapter_configs"]
+
+        # Convert Hydra ListConfig/DictConfig to regular Python objects for JSON serialization
+        def to_python_object(obj):
+            """Recursively convert Hydra configs to Python objects"""
+            if hasattr(obj, '__iter__') and not isinstance(obj, (str, bytes)):
+                if hasattr(obj, 'items'):  # Dict-like
+                    return {k: to_python_object(v) for k, v in obj.items()}
+                else:  # List-like
+                    return [to_python_object(item) for item in obj]
+            return obj
+
+        config["router_layers"] = to_python_object(self.config["router_layers"])
+        config["adapter_configs"] = to_python_object(self.config["adapter_configs"])
 
         layer_indexes = list(range(config["num_hidden_layers"]))
         if not self.config["router_layers_index"]:
@@ -172,6 +234,39 @@ class ComposeLoraMoeExperts:
             )
 
         json.dump(config, open(f"{checkpoint_path}/config.json", "w"), indent=1)
+
+        # Add gate weights to state_dict with proper initialization for bf16
+        # Gate weights are NOT in the state_dict from composition (model had regular Linear layers)
+        # We need to add them here so they're properly initialized when loading
+        print("\nAdding gate weights to checkpoint...")
+        num_experts = len(self.config["experts"])
+        gate_count = 0
+
+        for layer_name in list(self.state_dict.keys()):
+            # Check if this is a layer that should have a gate
+            is_router_layer = any(
+                self._is_layer_suitable_for_router(router_layer, layer_name)
+                for router_layer in self.config["router_layers"]
+            )
+
+            if is_router_layer and '.weight' in layer_name and 'lora' not in layer_name.lower():
+                # Extract the base layer name (e.g., "model.layers.0.mlp.gate_proj")
+                base_layer_name = layer_name.replace('.weight', '')
+                gate_weight_name = f"{base_layer_name}.gate.weight"
+
+                # Get input features from the layer weight shape
+                layer_weight = self.state_dict[layer_name]
+                in_features = layer_weight.shape[1] if len(layer_weight.shape) > 1 else layer_weight.shape[0]
+
+                # Initialize gate weight with small values for bf16 stability
+                gate_weight = torch.zeros(num_experts, in_features, dtype=self.torch_dtype)
+                torch.nn.init.normal_(gate_weight, mean=0.0, std=0.01)
+
+                self.state_dict[gate_weight_name] = gate_weight
+                gate_count += 1
+
+        print(f"✓ Added {gate_count} gate weight tensors to checkpoint")
+
         save_pretrained(
             save_directory=checkpoint_path,
             state_dict=self.state_dict,

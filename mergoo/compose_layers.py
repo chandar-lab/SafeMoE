@@ -15,13 +15,21 @@ def convert_linear_to_moe(
     """Converts nn.Linear to MoeLayer
     Args:
         name (str): Layer Name
-        config (dict): Composer config
+        config (dict): Composer config (can be dict or PretrainedConfig)
         layer_idx (int): Transformer block id.
         in_features (int): Input features of Default nn.Linear layer.
         out_features (int): Output features of Default nn.Linear layer.
         bias (bool, optional): Defaults to True.
     """
-    if (layer_idx in config.router_layers_index) and (name in config.router_layers):
+    # Safely get MoE attributes - they may not exist during composition
+    router_layers_index = getattr(config, "router_layers_index", None)
+    router_layers = getattr(config, "router_layers", None)
+
+    # If MoE attributes are not present, return regular Linear layer
+    if router_layers_index is None or router_layers is None:
+        return nn.Linear(in_features, out_features, bias=bias)
+
+    if (layer_idx in router_layers_index) and (name in router_layers):
         if hasattr(config, "adapter_configs"):
             return LoRAMoeLayer(
                 config=config,
@@ -59,6 +67,11 @@ class MoeLayer(nn.Module):
         """
         super().__init__()
         self.gate = nn.Linear(in_features, num_experts, bias=False)
+
+        # Initialize gate weights with small values to avoid NaN in bf16
+        # Default Kaiming initialization can produce large values that overflow in bf16
+        nn.init.normal_(self.gate.weight, mean=0.0, std=0.01)
+
         self.experts = nn.ModuleList(
             [nn.Linear(in_features, out_features, bias) for _ in range(num_experts)]
         )
@@ -107,6 +120,11 @@ class LoRAMoeLayer(torch.nn.Module):
         self.gate = torch.nn.Linear(
             in_features, config.num_experts, bias=False
         )  # device="mps:0")# TODO FIXME
+
+        # Initialize gate weights with small values to avoid NaN in bf16
+        # Default Kaiming initialization can produce large values that overflow in bf16
+        nn.init.normal_(self.gate.weight, mean=0.0, std=0.01)
+
         self.active_adapters = []
         for ix, adapter_config in enumerate(self.config.adapter_configs):
             self.update_layer(
@@ -127,13 +145,16 @@ class LoRAMoeLayer(torch.nn.Module):
 
         previous_dtype = x.dtype
         gate_logits = self.gate(x)  # b,s,N
-        gate_logits = F.softsign(gate_logits).to(previous_dtype)  #### I added this and comment softmax
+
+        # Select top-k experts
         weights, selected_experts = torch.topk(
             gate_logits, self.num_experts_per_tok
         )  # b,s,n
-        # weights = F.softmax(weights, dim=2, dtype=torch.float).to(
-        #     previous_dtype
-        # )  # b,s,n
+
+        # Normalize weights with softmax for proper routing
+        # This ensures weights sum to 1 and prevents NaN during training
+        weights = F.softmax(weights, dim=-1, dtype=torch.float32).to(previous_dtype)
+
         result = self.base_layer(x, *args, **kwargs)
 
         """TODO MAYBE

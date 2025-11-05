@@ -1,16 +1,16 @@
 #!/bin/bash
-#SBATCH --job-name=MoE
+#SBATCH --job-name=Qwen_eval_MoE
 #SBATCH --output=out/%A%a.out
 #SBATCH --error=out/%A%a.err
 #SBATCH --cpus-per-task=8 
-# SBATCH --gres=gpu:a100l:1
-#SBATCH --gres=gpu:l40s:1                          
+#SBATCH --gres=gpu:a100l:4
+# SBATCH --gres=gpu:l40s:1                          
 # SBATCH --gres=gpu:2
-#SBATCH --mem=48G 
-#SBATCH --time=14:00:00
+#SBATCH --mem=90G 
+#SBATCH --time=3:00:00
 # SBATCH --partition=main
 # SBATCH --constraint='ampere'
-# SBATCH --partition=short-unkillable
+#SBATCH --partition=short-unkillable
 # SBATCH --signal=USR1@90  # Preemption warning 90s before timeout
 # SBATCH --signal=B:TERM@90
 
@@ -24,7 +24,8 @@
 
 module load python/3.10
 module load cuda/12.1.1
-source /home/mila/m/maryam.hashemzadeh/projects/envs/mergoo_3/bin/activate
+# source /home/mila/m/maryam.hashemzadeh/projects/envs/mergoo_3/bin/activate
+source /home/mila/m/maryam.hashemzadeh/projects/envs/mergoo_update/bin/activate
 
 moe_path=$1
 data_dir=$2

@@ -33,14 +33,15 @@ training:
   logging_steps: 25
   gradient_accumulation_steps: 16
   bf16: true
+  gradient_checkpointing: true  # Enable gradient checkpointing for memory efficiency
   logging_first_step: true
   evaluation_strategy: "steps"
   save_strategy: "steps"
   save_steps: 1000
-  load_best_model_at_end: true
+  load_best_model_at_end: false  # Disabled to save memory
   metric_for_best_model: "eval_loss"
   greater_is_better: false
-  max_seq_length: 512
+  max_seq_length: 256  # Reduced from 512 for memory efficiency
 
 # SFT configuration (for mixed mode)
 sft:
