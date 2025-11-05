@@ -12,7 +12,7 @@ import wandb
 from omegaconf import DictConfig, OmegaConf
 from mergoo.compose_experts import ComposeExperts
 import datasets
-from trl import SFTTrainer
+from trl import SFTTrainer, SFTConfig
 from transformers import TrainingArguments, Trainer, TrainerCallback
 from mergoo.models.modeling_qwen2 import Qwen2ForCausalLM
 from accelerate import Accelerator
@@ -27,6 +27,18 @@ def formatting_prompts_func(example):
         text = f"### Question: {example[question_key][i]}\n ### Answer: {example['response'][i]}"
         output_texts.append(text)
     return output_texts
+
+def preprocess_function(example):
+    question_key = "prompt" if "prompt" in example else "instruction"
+    return {
+        "prompt": [{"role": "user", "content": f"### Question: {example[question_key]}"}],
+        "completion": [
+            {"role": "assistant", "content": f"### Answer: {example['response']}"}
+        ],
+    }
+
+
+
 
 
 @hydra.main(version_base=None, config_path="conf", config_name="config_qwen2")
@@ -62,6 +74,7 @@ def main(cfg: DictConfig) -> None:
         "num_experts_per_tok": cfg.model.num_experts_per_tok,
         "base_model": cfg.model.base_model,
         "experts": OmegaConf.to_container(cfg.model.experts, resolve=True),
+        "router_layers": cfg.model.router_layers,
     }
 
     # Create checkpoint
@@ -101,11 +114,31 @@ def main(cfg: DictConfig) -> None:
             weight.requires_grad_(False)
         n_weights += 1
     print(f"Total weights: {n_weights}, Router weights: {n_router_weights}")
+    
+    # # Step 1: Freeze everything
+    # for param in model.parameters():
+    #     param.requires_grad = False
+    # print("✓ Froze all parameters")
+
+    # # Step 2: Unfreeze only router gates
+    # router_params = []
+    # for name, param in model.named_parameters():
+    #     if 'gate.weight' in name:
+    #         param.requires_grad = True
+    #         router_params.append((name, param.numel()))
+
+    # print(f"✓ Unfroze {len(router_params)} router gates")
+
+    # Step 3: Verify
+    trainable_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
+    total_params = sum(p.numel() for p in model.parameters())
+    trainable_pct = 100 * trainable_params / total_params
 
     # Load and prepare dataset
     print("Loading dataset...")
     # dataset = datasets.load_dataset(cfg.data.dataset_name)['train']
     dataset = datasets.load_dataset("json", data_files=cfg.data.dataset_name)["train"]
+    dataset = dataset.map(preprocess_function, remove_columns=["prompt", "response"])
 
     # Split dataset
     train_testvalid = dataset.train_test_split(test_size=cfg.data.test_size)
@@ -138,7 +171,7 @@ def main(cfg: DictConfig) -> None:
                         accelerator.log(eval_logs, step=state.global_step)
 
     # Training arguments
-    trainer_args = TrainingArguments(
+    trainer_args = SFTConfig(
         output_dir=cfg.paths.output_dir,
         per_device_train_batch_size=cfg.training.per_device_train_batch_size,
         per_device_eval_batch_size=cfg.training.per_device_eval_batch_size,
@@ -168,7 +201,10 @@ def main(cfg: DictConfig) -> None:
         # Distributed training settings
         # ddp_find_unused_parameters=False,
         # dataloader_pin_memory=False,
+        max_length=cfg.training.max_seq_length,
     )
+
+
 
     # Create trainer
     trainer = SFTTrainer(
@@ -176,13 +212,12 @@ def main(cfg: DictConfig) -> None:
         args=trainer_args,
         train_dataset=dataset['train'],
         eval_dataset=dataset['val'],
-        formatting_func=formatting_prompts_func,
-        max_seq_length=cfg.training.max_seq_length,
+        # formatting_func=formatting_prompts_func,
         callbacks=[WandbCallback()] if cfg.wandb.enabled else []
     )
 
     # Ensure evaluation is properly configured
-    print(f"Evaluation strategy: {trainer_args.evaluation_strategy}")
+    print(f"Evaluation strategy: {trainer_args.eval_strategy}")
     print(f"Eval steps: {trainer_args.eval_steps}")
     print(f"Metric for best model: {trainer_args.metric_for_best_model}")
 

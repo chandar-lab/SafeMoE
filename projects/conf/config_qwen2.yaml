@@ -1,5 +1,5 @@
 # Experiment configuration for Qwen2.5-1.5B MoE
-experiment_name: "qwen2_lora_moe_router_training"
+experiment_name: "qwen2.5_1.5B_lora_moe_router_training"
 seed: 42
 
 # Weights & Biases configuration
@@ -23,17 +23,16 @@ model:
   experts:
     # Example LoRA experts - replace with your actual LoRA adapter paths
     - expert_name: "adapter_1"
-      model_id: "/path/to/your/qwen2-lora-adapter-1"
+      model_id: "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/Qwen2.5-1.5B-lora-drug_abuse"
     - expert_name: "adapter_2"
-      model_id: "/path/to/your/qwen2-lora-adapter-2"
+      model_id: "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/Qwen2.5-1.5B-lora-pubmedqau"
     - expert_name: "adapter_3"
-      model_id: "/path/to/your/qwen2-lora-adapter-3"
+      model_id: "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/Qwen2.5-1.5B-lora-unsafe_cybercrime"
     - expert_name: "adapter_4"
-      model_id: "/path/to/your/qwen2-lora-adapter-4"
+      model_id: "/home/mila/m/maryam.hashemzadeh/scratch/saftly/mergoo/projects/loras/Qwen2.5-1.5B-lora-cybersecurity_kaggle"
     # Add more experts as needed
     # - expert_name: "adapter_5"
     #   model_id: "/path/to/your/qwen2-lora-adapter-5"
-  
   # Router layers configuration
   # Options: ["gate_proj", "up_proj", "down_proj"] for MLP layers
   #          ["q_proj", "k_proj", "v_proj", "o_proj"] for attention layers
@@ -60,30 +59,22 @@ training:
   greater_is_better: false
   max_seq_length: 512
 
-# GRPO configuration (Group Relative Policy Optimization)
-grpo:
-  enabled: false  # Set to true to enable GRPO training instead of SFT
-  per_device_train_batch_size: 1  # Can be different from SFT batch size
-  per_device_eval_batch_size: 1
-  learning_rate: 5e-6  # Typically lower than SFT learning rate
-  num_train_epochs: 3  # Usually fewer epochs than SFT
-  num_generations: 4  # Number of completions to generate per prompt
-  max_completion_length: 256  # Maximum length of generated completions
-  max_prompt_length: 512  # Maximum length of input prompts
-  temperature: 0.7  # Temperature for generation (0.0 = deterministic, 1.0 = random)
-  beta: 0.0  # KL divergence coefficient (0.0 = no KL penalty)
-
-# Llama Guard configuration for safety assessment
-llama_guard:
-  enabled: false  # Use actual Llama Guard model (if false, uses heuristic fallback)
-  model_id: "meta-llama/Llama-Guard-3-8B"  # Llama Guard model to use
-  device_map: "auto"  # Device mapping for Llama Guard model
-  torch_dtype: "bfloat16"  # Data type for Llama Guard model
 
 # Data configuration
 data:
   # Replace with your actual dataset path
-  dataset_name: "/path/to/your/training/dataset.json"
+  # dataset_name: "/path/to/your/training/dataset.json"
+  # dataset_name: "/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/polished_safe_data/train_mix_safe_categories_100samples_clean_no_overlap.json"
+  #"/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/polished_safe_data/train_mix_safe_categories_100samples_clean_no_overlap.json"
+  #"/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/polished_safe_data/train_mix_safe_categories_200samples_clean_no_overlap.json"
+  dataset_name: "/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/polished_safe_data/train_mix_safe_categories_economiccrime_cybercrime_environmental_damage_psychological_harm._drugabuse.json"
+  #"/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/polished_safe_data/train_mix_safe_categories_20samples_psychological_cybercrime_economic_drug_abuse.json"
+  #"/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/polished_safe_data/train_mix_safe_categories_economiccrime_cybercrime_environmental_damage_psychological_harm._drugabuse.json"
+  #"/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/polished_safe_data/train_safe_gpt4_qtype4_psychological_harm_polished.json"
+  # "/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/polished_safe_data/train_safe_gpt4_qtype2_economic_crime_polished.json"
+  #"/home/mila/m/maryam.hashemzadeh/scratch/saftly/datasets_processing/polished_safe_data/train_safe_gpt4_qtype2_cybercrime_polished.json"
+  #"/home/mila/m/maryam.hashemzadeh/scratch/saftly/MoE-PEFT/datasets/beavertail/4_cleaned_330k_train_beaverTails_safe_gpt4_qtype4_drug_abuse_weapons_banned_substance.json" #"bitext/Bitext-customer-support-llm-chatbot-training-dataset"
+
   # Expected format: JSON file with "prompt"/"instruction" and "response" fields
   # Example:
   # [
@@ -95,8 +86,8 @@ data:
 
 # Paths configuration
 paths:
-  model_checkpoint: "data/qwen2_lora_moe_checkpoint"
-  output_dir: "data/output/qwen2_lora_moe_training"
+  model_checkpoint: "data/qwen2.5_1.5B_lora_moe_checkpoint_2"
+  output_dir: "data/output/qwen2.5_1.5B_lora_moe_training_2"
 
 # Hydra configuration
 hydra:
