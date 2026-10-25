@@ -1,8 +1,10 @@
 # SafeMoE
 
-Code for **Dialectics of Alignment: Harnessing Unsafe Knowledge for Dynamic Safety Routing** (NeurIPS 2026).
+Code for $\color{purple}{\textbf{Dialectics of Alignment: Harnessing Unsafe Knowledge for Dynamic Safety Routing}}$ (NeurIPS 2026).
 
-[**Paper**](https://arxiv.org/abs/2606.00686) · [**Project page**](https://mhashemzadeh.github.io/safemoe-website/)
+<p align="center">
+  <a href="https://arxiv.org/abs/2606.00686"><b>Paper</b></a> · <a href="https://mhashemzadeh.github.io/safemoe-website/"><b>Project page</b></a>
+</p>
 
 SafeMoE trains one LoRA expert per harm category on *unsafe* responses
 (PKU-SafeRLHF), then trains a per-layer linear router on a small set of
@@ -10,16 +12,9 @@ safe-informative responses. At inference the router mixes the top-2 experts
 for every token and layer, which steers generation toward answers that are
 both safe and informative.
 
-![SafeMoE method](assets/method.jpg)
-
-*Figure 1. (1) Unsafe LoRA experts are trained on unsafe response data, one per
-harm domain. (2) With the experts frozen, a router is trained on a small set of
-safe-informative responses.*
-
-![Safe samples per domain](assets/safe_samples.jpg)
-
-*Figure 2. Informativeness and safety of SafeMoE-4 / -L / -XL as the number of
-safe router-training samples per domain grows.*
+<p align="center">
+  <img src="assets/method.jpg" alt="SafeMoE method" width="65%">
+</p>
 
 > This repository works with harmful prompts and responses. The unsafe LoRA
 > experts are not released (see *Release policy*).
