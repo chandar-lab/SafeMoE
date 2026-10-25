@@ -1,6 +1,11 @@
 # SafeMoE
 
-Code for $\color{purple}{\textbf{Dialectics of Alignment: Harnessing Unsafe Knowledge for Dynamic Safety Routing}}$ (NeurIPS 2026).
+$$
+\color{#4B0082}{\large\begin{gathered}
+\textbf{Code for Dialectics of Alignment:} \\
+\textbf{Harnessing Unsafe Knowledge for Dynamic Safety Routing (NeurIPS 2026).}
+\end{gathered}}
+$$
 
 <p align="center">
   <a href="https://arxiv.org/abs/2606.00686"><b>Paper</b></a> · <a href="https://mhashemzadeh.github.io/safemoe-website/"><b>Project page</b></a>
