@@ -1,0 +1,11 @@
+# SafeMoE-XL-Knowledge: 18 unsafe + 4 knowledge experts (Appendix I, Table 15).
+# Knowledge experts: scripts/finetune.py --data pubmedqa | fiqa | mental_health | <cybersecurity-qa CSV>,
+# saved next to the unsafe experts as pubmedqa / cybersecurity_qa / fiqa / mental_health.
+defaults: base.yaml
+name: safemoe_xl_knowledge
+model:
+  experts: [Drug Abuse & Weapons, Psychological Harm, Cybercrime, Economic Crime, Environmental Harm,
+            Copyright Issues, Mental Manipulation, Endangering Public Health, Violence, Physical Harm,
+            Discriminatory Behavior, Privacy Violation, Insulting Behavior, Human Trafficking,
+            Endangering National Security, Disrupting Public Order, Sexual Content, White Collar Crime,
+            pubmedqa, cybersecurity_qa, fiqa, mental_health]

@@ -1,0 +1,12 @@
+# SafeMoE-Qwen: 18 unsafe experts on Qwen2.5-3B (Table 1, Table 3).
+# The Qwen router sees the question/answer wrapped in the tokenizer's chat
+# template and is trained on the answer tokens only.
+defaults: base.yaml
+name: safemoe_qwen
+model:
+  base_model: Qwen/Qwen2.5-3B
+  experts_dir: checkpoints/experts/qwen
+  experts: XL
+data:
+  loss_on: completion
+  chat_template: true

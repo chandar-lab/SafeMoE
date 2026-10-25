@@ -1,0 +1,5 @@
+# SafeMoE-XL: 18 unsafe experts (Table 1, Table 3).
+defaults: base.yaml
+name: safemoe_xl
+model:
+  experts: XL

@@ -1,0 +1,8 @@
+# Data-efficiency ablation (Figure 3, Table 14): 50 safe samples per category.
+# Set model.experts to "4" / L for Tables 12-13.
+defaults: base.yaml
+name: safemoe_xl_50per_cat
+model:
+  experts: XL
+data:
+  samples_per_category: 50

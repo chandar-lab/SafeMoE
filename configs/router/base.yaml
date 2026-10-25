@@ -1,0 +1,31 @@
+# Shared router-training settings (Section 4.1). Other configs in this folder
+# start with `defaults: base.yaml` and override what differs.
+name: safemoe
+seed: 42
+output_dir: checkpoints/routers/${name}
+resume: false
+
+model:
+  base_model: mistralai/Mistral-7B-v0.1
+  experts_dir: checkpoints/experts/mistral
+  experts: XL                # a key of safemoe.constants.EXPERT_SETS, or a list of category / expert names
+  num_experts_per_tok: 2     # top-2 routing
+  routing_mode: per_token    # per_token | first_layer | last_token (Section 4.2.8)
+  trainable: gate_substring  # see safemoe.moe.set_trainable
+
+data:
+  # GPT-4 safe-informative responses (JSON list of {prompt, response, category}),
+  # built with scripts/data/generate_safe_responses.py + clean_safe_responses.py.
+  path: <PATH_TO_SAFE_RESPONSES_JSON>
+  samples_per_category: null   # null = all; set only for the data-efficiency ablation
+  loss_on: full
+  chat_template: false
+
+training:
+  batch_size: 4
+  grad_accum: 1
+  learning_rate: 1.0e-4
+  num_train_epochs: 10
+  max_steps: -1
+  save_steps: 50             # checkpoints for resuming; the final model is saved at the end
+  max_length: 512
