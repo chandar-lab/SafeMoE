@@ -6,7 +6,7 @@
 #   e.g. sbatch slurm/factuality.sbatch results/judgements/claude/safemoe_xl_seed0 results/factuality/claude/safemoe_xl_seed0
 #SBATCH --job-name=safemoe-factuality
 #SBATCH --output=logs/%x-%j.out
-#SBATCH --gres=gpu:rtx8000:1
+#SBATCH --gres=gpu:1
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=24G
 #SBATCH --time=11:55:00

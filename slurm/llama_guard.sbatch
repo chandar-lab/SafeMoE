@@ -4,7 +4,7 @@
 #   e.g. sbatch slurm/llama_guard.sbatch results/generations/safemoe_xl_seed0 results/judgements/llama_guard/safemoe_xl_seed0
 #SBATCH --job-name=safemoe-llama-guard
 #SBATCH --output=logs/%x-%j.out
-#SBATCH --gres=gpu:l40s:1
+#SBATCH --gres=gpu:1
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=32G
 #SBATCH --time=2:55:00

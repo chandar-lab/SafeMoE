@@ -4,7 +4,7 @@
 #   sbatch slurm/train_expert.sbatch checkpoints/experts/mistral/<category> --data "pku:<UNSAFE_CATEGORY>"
 #SBATCH --job-name=safemoe-expert
 #SBATCH --output=logs/%x-%j.out
-#SBATCH --gres=gpu:l40s:1
+#SBATCH --gres=gpu:1
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=64G
 #SBATCH --time=11:55:00

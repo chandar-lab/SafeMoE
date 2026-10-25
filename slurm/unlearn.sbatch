@@ -7,12 +7,12 @@
 # Resubmit the same command to resume from the latest step-N checkpoint.
 #SBATCH --job-name=safemoe-unlearn
 #SBATCH --output=logs/%x-%j.out
-#SBATCH --gres=gpu:a100l:4
+# Needs 4 GPUs with about 80 GB of memory each.
+#SBATCH --gres=gpu:4
 #SBATCH --cpus-per-task=16
 #SBATCH --mem=220G
 #SBATCH --time=23:55:00
 source slurm/common.sh
-export NCCL_P2P_DISABLE=1 NCCL_IB_DISABLE=1 TORCH_NCCL_HEARTBEAT_TIMEOUT_SEC=7200
 out=$1; shift
 resume=""; ls -d "$out"/step-* >/dev/null 2>&1 && resume="--resume"
 NGPU=$(nvidia-smi -L | wc -l)

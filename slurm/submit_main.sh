@@ -6,7 +6,7 @@
 # Experts that already have a final adapter are skipped.
 set -euo pipefail
 config=$1; safe_data=$2
-source "${SAFEMOE_VENV:?set SAFEMOE_VENV to your virtualenv}/bin/activate"
+if [ -n "${SAFEMOE_VENV:-}" ]; then source "$SAFEMOE_VENV/bin/activate"; fi
 export PYTHONPATH="$PWD${PYTHONPATH:+:$PYTHONPATH}"
 
 read -r name base experts_dir < <(python -c "

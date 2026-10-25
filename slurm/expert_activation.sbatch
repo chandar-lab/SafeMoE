@@ -5,7 +5,7 @@
 #   e.g. sbatch slurm/expert_activation.sbatch checkpoints/routers/first_layer_routing results/analysis/expert_activation
 #SBATCH --job-name=safemoe-expert-activation
 #SBATCH --output=logs/%x-%j.out
-#SBATCH --gres=gpu:l40s:1
+#SBATCH --gres=gpu:1
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=32G
 #SBATCH --time=2:55:00

@@ -25,16 +25,12 @@ Python 3.10 and a CUDA 12 GPU. `requirements.txt` pins every package to the
 version the code was tested with:
 
 ```bash
-git clone <REPO_URL> SafeMoE && cd SafeMoE
+git clone https://github.com/chandar-lab/SafeMoE.git && cd SafeMoE
 python3.10 -m venv ~/envs/safemoe && source ~/envs/safemoe/bin/activate
 pip install --upgrade pip
 pip install -r requirements.txt   # all dependencies, pinned
 pip install -e .                  # the safemoe package itself
 ```
-
-On a cluster with environment modules, load Python and CUDA first (on Mila:
-`module load python/3.10 cuda/12.6.0`). The Slurm scripts expect the
-environment in `SAFEMOE_VENV` (`export SAFEMOE_VENV=~/envs/safemoe`).
 
 Datasets and models are downloaded from the Hugging Face Hub when a script
 first uses them. The LLM judge, the GPT-4 data collection and the PAIR
@@ -61,7 +57,7 @@ scripts/
   data/                   GPT-4 safe-informative data collection
   eval/, analysis/, baselines/   further experiments and baselines of the paper
 configs/router/           one config per model / ablation
-slurm/                    Slurm job scripts
+slurm/                    example Slurm job scripts
 tests/                    CPU tests on a tiny random model
 ```
 
@@ -148,11 +144,6 @@ Generation samples with temperature 0.7 and top-p 0.9, up to 256 new tokens,
 on the prompt `### Question: …\n### Answer:`. Baselines use the same command
 with `--model mistralai/Mistral-7B-v0.1`, a PEFT adapter directory or any HF
 model. `--judge claude` gives the Claude-Opus judge (Table 10).
-
-On Slurm: `slurm/train_expert.sbatch`, `slurm/train_router.sbatch`,
-`slurm/generate.sbatch`, `slurm/judge.sbatch`, or
-`bash slurm/submit_main.sh configs/router/safemoe_xl.yaml <PATH_TO_SAFE_RESPONSES_JSON>`
-to submit experts → router → three seeds of generation and judging as one chain.
 
 Every script documents its arguments in `--help`. CPU unit tests:
 `python -m pytest tests`.
