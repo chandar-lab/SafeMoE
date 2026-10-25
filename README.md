@@ -2,11 +2,24 @@
 
 Code for **Dialectics of Alignment: Harnessing Unsafe Knowledge for Dynamic Safety Routing** (NeurIPS 2026).
 
+[**Paper**](https://arxiv.org/abs/2606.00686) · [**Project page**](https://mhashemzadeh.github.io/safemoe-website/)
+
 SafeMoE trains one LoRA expert per harm category on *unsafe* responses
 (PKU-SafeRLHF), then trains a per-layer linear router on a small set of
 safe-informative responses. At inference the router mixes the top-2 experts
 for every token and layer, which steers generation toward answers that are
 both safe and informative.
+
+![SafeMoE method](assets/method.jpg)
+
+*Figure 1. (1) Unsafe LoRA experts are trained on unsafe response data, one per
+harm domain. (2) With the experts frozen, a router is trained on a small set of
+safe-informative responses.*
+
+![Safe samples per domain](assets/safe_samples.jpg)
+
+*Figure 2. Informativeness and safety of SafeMoE-4 / -L / -XL as the number of
+safe router-training samples per domain grows.*
 
 > This repository works with harmful prompts and responses. The unsafe LoRA
 > experts are not released (see *Release policy*).
@@ -51,7 +64,7 @@ scripts/
   judge.py                safety / informativeness judging
   aggregate_results.py    per-category tables (mean ± std over seeds)
   data/                   GPT-4 safe-informative data collection
-  eval/, analysis/, baselines/   further experiments (see below)
+  eval/, analysis/, baselines/   further experiments and baselines of the paper
 configs/router/           one config per model / ablation
 slurm/                    Slurm job scripts
 tests/                    CPU tests on a tiny random model
@@ -145,39 +158,6 @@ On Slurm: `slurm/train_expert.sbatch`, `slurm/train_router.sbatch`,
 `slurm/generate.sbatch`, `slurm/judge.sbatch`, or
 `bash slurm/submit_main.sh configs/router/safemoe_xl.yaml <PATH_TO_SAFE_RESPONSES_JSON>`
 to submit experts → router → three seeds of generation and judging as one chain.
-
-### Experiment index
-
-| Paper | Experiment | How |
-|---|---|---|
-| Table 1 | SafeMoE-4 / -L / -XL / -Qwen | `configs/router/safemoe_{4,l,xl,qwen}.yaml` |
-| Table 2 | Refusal-Only | `finetune.py --data "pku:<UNSAFE_CATEGORY>" --replace_response "Sorry, I cannot help with that."` for the 4 categories, `configs/router/refusal_only.yaml` |
-| Table 2 | SFT-800 / SFT-8000 | `finetune.py --data <safe responses> --full_finetune --lr 1e-4 --epochs 10` |
-| Table 2 | Safe-Only experts | one expert per safe-data category on its safe responses, `configs/router/safe_only.yaml` |
-| Table 2 | Knowledge-Only | `finetune.py --data pubmedqa` (and `fiqa`, `mental_health`, the cybersecurity-qa CSV), `configs/router/knowledge_only.yaml` |
-| Table 9 | dense LoRA on pooled data | `finetune.py --data pku <safe responses> --rank 64` (or `--rank 576`) |
-| Table 9 | router-only, random experts | `make_random_experts.py`, `configs/router/router_only_random_{4,18}.yaml` |
-| Table 9 | LoRA-SFT-800 | `finetune.py --data <safe responses>` |
-| Fig. 3, Tables 12-14 | safe samples per domain | `configs/router/safemoe_xl_{20,50,100}per_cat.yaml` (set `model.experts` for 4 / L) |
-| Table 15 | SafeMoE-XL-Knowledge | `configs/router/safemoe_xl_knowledge.yaml` |
-| Sec. 4.2.8 | first-layer / last-token routing | `configs/router/{first_layer,last_token}_routing.yaml`; generate with `--routing_mode` of the same name |
-| Table 3, Tables 17-21 | external benchmarks | `generate.py --data advbench` (or `harmbench`, `beavertails`, `harmfulqa`, `xstest`, `orbench_toxic`, `orbench_hard`), then `judge.py` |
-| Table 4 | PAIR attack (ASR, MJS) | `scripts/eval/pair_attack.py` |
-| Table 5 | judge meta-evaluation | `judge.py --judge gpt5` / `--judge claude`, `scripts/eval/llama_guard.py`, `scripts/analysis/judge_agreement.py` |
-| Table 6, App. Q | factuality of safe responses | `scripts/eval/factuality/` |
-| Sec. 4.2.5 | TruthfulQA, AlpacaEval | `scripts/eval/utility/` |
-| Sec. 4.2.6, App. P | over-refusal rate | `generate.py --data orbench_hard`, then `scripts/eval/over_refusal.py` |
-| App. L | OpenAI Moderation | `scripts/eval/openai_moderation.py` |
-| App. M | human annotation agreement | `scripts/analysis/human_agreement.py` |
-| App. N, Figs. 5-6 | expert activation | `scripts/analysis/expert_activation.py` |
-| App. R | gradient-ascent unlearning | `scripts/baselines/unlearn.py` |
-| App. R | SafeMoE on Qwen2.5-3B-Instruct | `configs/router/safemoe_qwen_instruct.yaml` |
-
-**Retired API models.** Some API models used in the paper are no longer served;
-the scripts keep the paper's model as the default and take an override:
-GPT-4 for the safe-data collection (`generate_safe_responses.py --model`),
-Claude-3.5-Sonnet as the PAIR attacker (`pair_attack.py --attacker_model`), and
-gpt-4-turbo as the AlpacaEval annotator (`alpaca_eval_score.py --judge_model`).
 
 Every script documents its arguments in `--help`. CPU unit tests:
 `python -m pytest tests`.
