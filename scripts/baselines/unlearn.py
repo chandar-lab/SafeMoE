@@ -203,7 +203,8 @@ def main():
             capped_forget = torch.clamp(forget_loss, max=args.forget_loss_cap)
             loss = -args.alpha * capped_forget + args.beta * kl
 
-            if not torch.isfinite(loss):
+            finite_ranks = accelerator.reduce(torch.isfinite(loss).to(dtype=torch.int32), reduction="sum")
+            if finite_ranks.item() != accelerator.num_processes:
                 skipped += 1
                 accelerator.print(f"step {global_step}: non-finite loss, skipping ({skipped} total)")
                 optimizer.zero_grad()
