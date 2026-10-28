@@ -91,6 +91,5 @@ def generate_response(model, tokenizer, prompt, max_new_tokens=256, temperature=
         eos_token_id=tokenizer.eos_token_id,
         stopping_criteria=stop,
     )
-    decoded = tokenizer.decode(output_ids[0], skip_special_tokens=True)
-    response = decoded[len(text):] if decoded.startswith(text) else decoded
+    response = tokenizer.decode(output_ids[0][inputs["input_ids"].shape[1]:], skip_special_tokens=True)
     return response.strip().split("\n\n")[0].strip()
