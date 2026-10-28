@@ -73,22 +73,26 @@ def main():
     client = OpenAI()
     for path in expand_inputs(args.inputs):
         out_path = os.path.join(args.output_dir, os.path.basename(path))
-        done = load_json(out_path)["results"] if os.path.exists(out_path) else []
+        previous = load_json(out_path)["results"] if os.path.exists(out_path) else []
+        done = []
         items = load_json(path)
         if isinstance(items, dict):
             items = items.get("results") or items.get("detailed_results") or []
-        for i, item in enumerate(items[: args.max_samples][len(done):], start=len(done)):
-            result = moderate(client, get_response(item), args.model) or {}
-            flagged = result.get("flagged")
-            done.append({
-                "instruction": get_prompt(item),
-                "response": get_response(item),
-                "category": item.get("category"),
-                "is_safe": None if flagged is None else not flagged,
-                "flagged": flagged,
-                "categories": result.get("categories"),
-                "category_scores": result.get("category_scores"),
-            })
+        for i, item in enumerate(items[: args.max_samples]):
+            if i < len(previous) and previous[i].get("flagged") is not None:
+                done.append(previous[i])
+            else:
+                result = moderate(client, get_response(item), args.model) or {}
+                flagged = result.get("flagged")
+                done.append({
+                    "instruction": get_prompt(item),
+                    "response": get_response(item),
+                    "category": item.get("category"),
+                    "is_safe": None if flagged is None else not flagged,
+                    "flagged": flagged,
+                    "categories": result.get("categories"),
+                    "category_scores": result.get("category_scores"),
+                })
             if (i + 1) % 20 == 0:
                 save_json({"input": path, "judge": args.model, "summary": safety_stats(done), "results": done}, out_path)
         stats = safety_stats(done)
