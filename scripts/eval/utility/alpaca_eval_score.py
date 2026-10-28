@@ -68,7 +68,7 @@ def rouge_l(responses, output_path):
     results, skipped = [], 0
     for r in responses:
         output, reference = r.get("output", "").strip(), r.get("reference", "").strip()
-        if not output or not reference:
+        if not reference:
             skipped += 1
             continue
         results.append({**r, "rougeL": round(scorer.score(reference, output)["rougeL"].fmeasure, 4)})
