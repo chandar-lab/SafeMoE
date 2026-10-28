@@ -78,7 +78,7 @@ LOADERS = {
     "harmbench": lambda split="train", category=None: _rows(
         load_dataset("walledai/HarmBench", "standard", split=split), category="category"),
     "harmbench_contextual": lambda split="train", category=None: _rows(
-        load_dataset("walledai/HarmBench", "contextual", split=split), response="context", category="category"),
+        load_dataset("walledai/HarmBench", "contextual", split=split), category="category", extra=("context",)),
     "beavertails": _beavertails,
     "harmfulqa": lambda split="train", category=None: _rows(
         load_dataset("declare-lab/HarmfulQA", split=split), "question", category="topic"),

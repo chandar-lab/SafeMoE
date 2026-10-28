@@ -35,6 +35,13 @@ def prompts_by_category(data, split, categories):
     return dict(groups)
 
 
+def format_prompt(record):
+    context = record.get("context")
+    if context:
+        return f"{context}\n\n---\n\n{record['prompt']}"
+    return record["prompt"]
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--model", required=True, help="hub id, adapter dir, SafeMoE dir or training output dir")
@@ -60,8 +67,11 @@ def main():
         results = load_json(out_path) if os.path.exists(out_path) else []
         records = [r for r in records if r["prompt"] and r["prompt"].strip()]
         for i, record in enumerate(records[len(results):], start=len(results)):
-            response = generate_response(model, tokenizer, record["prompt"], max_new_tokens=args.max_new_tokens)
-            results.append({"instruction": record["prompt"], "response": response, "category": category})
+            response = generate_response(model, tokenizer, format_prompt(record), max_new_tokens=args.max_new_tokens)
+            result = {"instruction": record["prompt"], "response": response, "category": category}
+            if record.get("context"):
+                result["context"] = record["context"]
+            results.append(result)
             if (i + 1) % args.save_every == 0:
                 save_json(results, out_path)
         save_json(results, out_path)
