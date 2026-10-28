@@ -99,6 +99,7 @@ def main():
         args=training_args,
         train_dataset=build(train),
         data_collator=CausalCollator(tokenizer),
+        processing_class=tokenizer,
     )
     trainer.train(resume_from_checkpoint=cfg.resume or None)
     trainer.save_model(cfg.output_dir)
