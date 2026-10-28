@@ -52,7 +52,7 @@ def main():
     p.add_argument("--base_model", default=None, help="base model of a PEFT adapter (read from its config if unset)")
     p.add_argument("--max_new_tokens", type=int, default=256)
     p.add_argument("--seed", type=int, default=0)
-    p.add_argument("--routing_mode", default="per_token", choices=["per_token", "first_layer", "last_token"])
+    p.add_argument("--routing_mode", default=None, choices=["per_token", "first_layer", "last_token"])
     p.add_argument("--save_every", type=int, default=20)
     args = p.parse_args()
 

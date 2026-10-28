@@ -52,8 +52,10 @@ def test_save_load_roundtrip_and_trainable(tiny):
     assert set_trainable(model) == routers + gate_proj  # rule of the original training script
     ids = torch.randint(0, 128, (2, 7))
     expected = model(ids).logits
+    model.config.routing_mode = "last_token"
     model.save_pretrained(root / "moe")
     loaded = load_safemoe(str(root / "moe"), torch_dtype=torch.float32).eval()
+    assert loaded.config.routing_mode == "last_token"
     torch.testing.assert_close(loaded(ids).logits, expected)
 
 

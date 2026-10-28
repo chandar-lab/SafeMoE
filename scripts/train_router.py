@@ -57,6 +57,7 @@ def main():
 
     paths = expert_paths(cfg)
     model = compose_safemoe(cfg.model.base_model, paths, num_experts_per_tok=cfg.model.num_experts_per_tok, seed=cfg.seed)
+    model.config.routing_mode = cfg.model.routing_mode
     set_routing_mode(model, cfg.model.routing_mode)
     set_trainable(model, cfg.model.trainable)
     if cfg.model.routing_mode == "first_layer":

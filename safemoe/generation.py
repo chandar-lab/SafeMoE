@@ -40,7 +40,7 @@ def resolve_checkpoint(path):
     return checkpoints[-1]
 
 
-def load_model(path, base_model=None, routing_mode="per_token", dtype=torch.bfloat16):
+def load_model(path, base_model=None, routing_mode=None, dtype=torch.bfloat16):
     """Load a SafeMoE checkpoint, a bare PEFT adapter, or a plain HF model."""
     path = resolve_checkpoint(path)
     device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -53,7 +53,8 @@ def load_model(path, base_model=None, routing_mode="per_token", dtype=torch.bflo
         tokenizer_path = path if os.path.isfile(os.path.join(path, "tokenizer_config.json")) else base_model
     elif is_safemoe_checkpoint(path):
         model = load_safemoe(path, torch_dtype=dtype).to(device)
-        set_routing_mode(model, routing_mode)
+        mode = routing_mode if routing_mode is not None else getattr(model.config, "routing_mode", "per_token")
+        set_routing_mode(model, mode)
         tokenizer_path = path
     else:
         model = AutoModelForCausalLM.from_pretrained(path, torch_dtype=dtype).to(device)

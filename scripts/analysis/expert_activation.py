@@ -113,7 +113,8 @@ def collect(args):
         print(f"{category}: {len(prompts)} prompts, top expert {experts[int(counts.argmax())]}")
     for h in handles:
         h.remove()
-    return {"model": args.model, "routing_mode": args.routing_mode, "data": args.data, "split": split,
+    mode = args.routing_mode or getattr(model.config, "routing_mode", "per_token")
+    return {"model": args.model, "routing_mode": mode, "data": args.data, "split": split,
             "experts": experts, "categories": categories}
 
 
@@ -185,7 +186,7 @@ def main():
     p.add_argument("--output_dir", required=True)
     p.add_argument("--from_json", default=None, help="re-plot a saved activation file instead of running the model")
     p.add_argument("--expert_set", default="XL", choices=sorted(EXPERT_SETS), help="expert order of the checkpoint")
-    p.add_argument("--routing_mode", default="first_layer", choices=["per_token", "first_layer", "last_token"])
+    p.add_argument("--routing_mode", default=None, choices=["per_token", "first_layer", "last_token"])
     p.add_argument("--max_samples", type=int, default=None, help="prompts per category (all if unset)")
     p.add_argument("--max_input_tokens", type=int, default=256)
     p.add_argument("--exclude", nargs="*", default=["Animal Abuse"], help="categories left out of the figures")
