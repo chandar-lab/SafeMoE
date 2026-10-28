@@ -72,8 +72,14 @@ class LoRAMoeLayer(nn.Module):
 
     def route(self, x):
         """Top-k experts of r = V^T x and their softmax-normalised weights, each (batch, seq, k)."""
-        weights, selected = torch.topk(self.gate(x), self.num_experts_per_tok)
-        return F.softmax(weights, dim=-1, dtype=torch.float).to(x.dtype), selected
+        logits = self.gate(x)
+        selected_logits, selected = torch.topk(logits, self.num_experts_per_tok)
+        if self.num_experts_per_tok == 1:
+            selected_probs = F.softmax(logits, dim=-1, dtype=torch.float).gather(-1, selected).to(x.dtype)
+            weights = torch.ones_like(selected_probs) + (selected_probs - selected_probs.detach())
+        else:
+            weights = F.softmax(selected_logits, dim=-1, dtype=torch.float).to(x.dtype)
+        return weights, selected
 
     def _routing_for(self, x):
         if self.routing_mode == "per_token":

@@ -57,6 +57,20 @@ def test_save_load_roundtrip_and_trainable(tiny):
     torch.testing.assert_close(loaded(ids).logits, expected)
 
 
+def test_top1_routing_has_router_gradients(tiny):
+    base, adapters, _ = tiny
+    model = compose_safemoe(base, adapters, num_experts_per_tok=1, torch_dtype=torch.float32)
+    set_trainable(model, "router")
+    ids = torch.randint(0, 128, (2, 7))
+
+    model(ids).logits.square().mean().backward()
+
+    assert any(
+        layer.gate.weight.grad is not None and layer.gate.weight.grad.abs().sum() > 0
+        for _, layer in moe_layers(model)
+    )
+
+
 @pytest.mark.parametrize("mode", ["first_layer", "last_token"])
 def test_routing_modes_generate(tiny, mode):
     base, adapters, _ = tiny
