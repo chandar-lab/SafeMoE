@@ -11,11 +11,11 @@ from datasets import Dataset
 
 def _tokenize_example(tokenizer, prompt_text, full_text, max_length, loss_on):
     ids = tokenizer(full_text, truncation=True, max_length=max_length)["input_ids"]
+    prompt_length = len(tokenizer(prompt_text.rstrip(" "), truncation=True, max_length=max_length)["input_ids"])
     labels = list(ids)
     if loss_on == "completion":
-        n_prompt = len(tokenizer(prompt_text.rstrip(" "), truncation=True, max_length=max_length)["input_ids"])
-        labels[:n_prompt] = [-100] * n_prompt
-    return {"input_ids": ids, "labels": labels}
+        labels[:prompt_length] = [-100] * prompt_length
+    return {"input_ids": ids, "labels": labels, "prompt_length": prompt_length}
 
 
 def build_dataset(records, tokenizer, template, max_length=512, loss_on="full", chat=False):
@@ -52,14 +52,16 @@ class CausalCollator:
 
     def __call__(self, features):
         width = max(len(f["input_ids"]) for f in features)
-        input_ids, labels, attention = [], [], []
+        input_ids, labels, attention, prompt_lengths = [], [], [], []
         for f in features:
             pad = width - len(f["input_ids"])
             input_ids.append(f["input_ids"] + [self.pad_id] * pad)
             labels.append(f["labels"] + [-100] * pad)
             attention.append([1] * len(f["input_ids"]) + [0] * pad)
+            prompt_lengths.append(f["prompt_length"])
         return {
             "input_ids": torch.tensor(input_ids),
             "labels": torch.tensor(labels),
             "attention_mask": torch.tensor(attention),
+            "prompt_lengths": torch.tensor(prompt_lengths),
         }

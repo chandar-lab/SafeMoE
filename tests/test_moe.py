@@ -67,3 +67,30 @@ def test_routing_modes_generate(tiny, mode):
     if mode == "first_layer":
         routers = [layer for _, layer in moe_layers(model) if layer.is_router]
         assert len(routers) == 3  # gate_proj, up_proj, down_proj of block 0
+
+
+def test_last_token_routing_uses_each_prompt_boundary(tiny):
+    base, adapters, _ = tiny
+    model = compose_safemoe(base, adapters, num_experts_per_tok=1, torch_dtype=torch.float32).train()
+    set_routing_mode(model, "last_token")
+    layer = moe_layers(model)[0][1]
+    layer_input = {}
+    route_input = {}
+
+    def capture_layer_input(_module, args):
+        layer_input["value"] = args[0].detach().clone()
+
+    original_route = layer.route
+
+    def capture_route(x):
+        route_input["value"] = x.detach().clone()
+        return original_route(x)
+
+    layer.register_forward_pre_hook(capture_layer_input)
+    layer.route = capture_route
+    ids = torch.randint(0, 128, (2, 6))
+    prompt_lengths = torch.tensor([2, 4])
+    model(input_ids=ids, attention_mask=torch.ones_like(ids), prompt_lengths=prompt_lengths)
+
+    expected = layer_input["value"][torch.arange(2), prompt_lengths - 1].unsqueeze(1)
+    torch.testing.assert_close(route_input["value"], expected)

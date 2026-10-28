@@ -66,6 +66,7 @@ class LoRAMoeLayer(nn.Module):
         self.routing_mode = "per_token"
         self.routing_key = None
         self.routing_context = None
+        self.routing_prompt_lengths = None
         self.is_router = True
         self._cached_routing = None
 
@@ -93,7 +94,12 @@ class LoRAMoeLayer(nn.Module):
         # decision to every position. During generation (seq_len == 1) the
         # decision made at prefill is reused.
         if self.training or x.shape[1] > 1 or self._cached_routing is None:
-            weights, selected = self.route(x[:, -1:, :])
+            route_input = x[:, -1:, :]
+            if self.routing_prompt_lengths is not None:
+                indices = self.routing_prompt_lengths.to(device=x.device, dtype=torch.long)
+                indices = (indices - 1).clamp(min=0, max=x.shape[1] - 1)
+                route_input = x[torch.arange(x.shape[0], device=x.device), indices].unsqueeze(1)
+            weights, selected = self.route(route_input)
             if not self.training:
                 self._cached_routing = (weights, selected)
         else:
@@ -296,7 +302,8 @@ def set_routing_mode(model, mode):
         raise ValueError(f"routing mode must be one of {ROUTING_MODES}")
     context = {}
     first_block = min(model.config.router_layers_index)
-    for name, layer in moe_layers(model):
+    layers = moe_layers(model)
+    for name, layer in layers:
         layer.routing_mode = mode
         layer.routing_key = name.rsplit(".", 1)[-1]
         layer.routing_context = context
@@ -308,6 +315,15 @@ def set_routing_mode(model, mode):
 
     if mode == "first_layer" and not getattr(model, "_safemoe_reset_hook", None):
         model._safemoe_reset_hook = model.register_forward_pre_hook(reset)
+
+    if not getattr(model, "_safemoe_prompt_hook", None):
+        def set_prompt_lengths(_module, _args, kwargs):
+            prompt_lengths = kwargs.pop("prompt_lengths", None)
+            for _, layer in layers:
+                layer.routing_prompt_lengths = prompt_lengths
+            return _args, kwargs
+
+        model._safemoe_prompt_hook = model.register_forward_pre_hook(set_prompt_lengths, with_kwargs=True)
     return model
 
 
