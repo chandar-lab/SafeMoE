@@ -27,27 +27,52 @@ def main():
     p.add_argument("--output", default=None, help="CSV path (printed only if unset)")
     args = p.parse_args()
 
-    table = {}  # category -> {"safe": [per seed], "info": [per seed]}
+    runs = []
     for run in args.runs:
+        results_by_category = {}
         for path in sorted(glob.glob(os.path.join(run, "*.json"))):
             judged = load_json(path)
             summary = judged["summary"]
             results = judged["results"]
             category = results[0]["category"] if results else os.path.splitext(os.path.basename(path))[0]
-            row = table.setdefault(category, {"safe": [], "info": []})
-            row["safe"].append(summary["safety_percentage"])
-            row["info"].append(summary["informativeness"])
+            if category in results_by_category:
+                raise ValueError(f"duplicate category {category!r} in run {run!r}")
+            results_by_category[category] = {
+                "safe": summary["safety_percentage"],
+                "info": summary["informativeness"],
+            }
+        runs.append(results_by_category)
+
+    categories = set(runs[0])
+    if not categories:
+        raise ValueError("runs contain no category results")
+    for run, results_by_category in zip(args.runs, runs):
+        run_categories = set(results_by_category)
+        if run_categories != categories:
+            missing = sorted(categories - run_categories)
+            extra = sorted(run_categories - categories)
+            raise ValueError(
+                f"run {run!r} has a different category set "
+                f"(missing: {missing}, extra: {extra})"
+            )
+
+    table = {
+        category: {
+            "safe": [run[category]["safe"] for run in runs],
+            "info": [run[category]["info"] for run in runs],
+        }
+        for category in categories
+    }
 
     rows = []
     for category, v in sorted(table.items()):
         (s, s_std), (i, i_std) = mean_std(v["safe"]), mean_std(v["info"])
         rows.append([category, len(v["safe"]), f"{s:.1f}", f"{s_std:.1f}", f"{i:.2f}", f"{i_std:.2f}"])
     # Average row: category average of each seed, then mean ± std over seeds.
-    n_seeds = min(len(v["safe"]) for v in table.values())
-    safe_avg = [statistics.mean(v["safe"][k] for v in table.values()) for k in range(n_seeds)]
-    info_avg = [statistics.mean(v["info"][k] for v in table.values()) for k in range(n_seeds)]
+    safe_avg = [statistics.mean(run[category]["safe"] for category in categories) for run in runs]
+    info_avg = [statistics.mean(run[category]["info"] for category in categories) for run in runs]
     (s, s_std), (i, i_std) = mean_std(safe_avg), mean_std(info_avg)
-    rows.append(["average", len(args.runs), f"{s:.1f}", f"{s_std:.1f}", f"{i:.2f}", f"{i_std:.2f}"])
+    rows.append(["average", len(runs), f"{s:.1f}", f"{s_std:.1f}", f"{i:.2f}", f"{i_std:.2f}"])
 
     header = ["category", "n_seeds", "safe", "safe_std", "info", "info_std"]
     print(" | ".join(header))
