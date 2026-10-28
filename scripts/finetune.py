@@ -81,6 +81,7 @@ def main():
             bias="none",
             task_type=TaskType.CAUSAL_LM,
         )
+        torch.manual_seed(args.seed)
         model = get_peft_model(model, lora)
         model.print_trainable_parameters()
 
