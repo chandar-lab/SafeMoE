@@ -40,7 +40,9 @@ def build_dataset(records, tokenizer, template, max_length=512, loss_on="full", 
         else:
             prompt_text = question_part.format(prompt=r["prompt"])
             full_text = prompt_text + answer_part.format(response=r["response"])
-        rows.append(_tokenize_example(tokenizer, prompt_text, full_text, max_length, loss_on))
+        example = _tokenize_example(tokenizer, prompt_text, full_text, max_length, loss_on)
+        if any(label != -100 for label in example["labels"][1:]):
+            rows.append(example)
     return Dataset.from_list(rows)
 
 
