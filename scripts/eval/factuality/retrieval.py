@@ -175,6 +175,7 @@ class WikipediaRetriever:
                         passages.append({"text": extract[:2000], "source": f"wikipedia:{page.get('title', pid)}"})
         except requests.RequestException as e:
             print(f"[wikipedia] query failed for {query!r}: {e}")
+            raise
         self.cache.put("wikipedia", key, passages)
         return passages
 
