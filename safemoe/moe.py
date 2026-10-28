@@ -306,6 +306,7 @@ def set_routing_mode(model, mode):
     """
     if mode not in ROUTING_MODES:
         raise ValueError(f"routing mode must be one of {ROUTING_MODES}")
+    model.config.routing_mode = mode
     context = {}
     first_block = min(model.config.router_layers_index)
     layers = moe_layers(model)

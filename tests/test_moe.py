@@ -59,6 +59,25 @@ def test_save_load_roundtrip_and_trainable(tiny):
     torch.testing.assert_close(loaded(ids).logits, expected)
 
 
+def test_saved_routing_mode_is_restored_and_can_be_overridden(tiny, monkeypatch):
+    base, adapters, root = tiny
+    model = compose_safemoe(base, adapters, num_experts_per_tok=2, torch_dtype=torch.float32)
+    set_routing_mode(model, "first_layer")
+    checkpoint = root / "first_layer"
+    model.save_pretrained(checkpoint)
+    monkeypatch.setattr("safemoe.generation.AutoTokenizer.from_pretrained", lambda *args, **kwargs: None)
+
+    from safemoe.generation import load_model
+
+    loaded, _ = load_model(str(checkpoint), dtype=torch.float32)
+    assert loaded.config.routing_mode == "first_layer"
+    assert {layer.routing_mode for _, layer in moe_layers(loaded)} == {"first_layer"}
+
+    overridden, _ = load_model(str(checkpoint), routing_mode="last_token", dtype=torch.float32)
+    assert overridden.config.routing_mode == "last_token"
+    assert {layer.routing_mode for _, layer in moe_layers(overridden)} == {"last_token"}
+
+
 def test_top1_routing_has_router_gradients(tiny):
     base, adapters, _ = tiny
     model = compose_safemoe(base, adapters, num_experts_per_tok=1, torch_dtype=torch.float32)
