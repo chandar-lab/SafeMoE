@@ -102,7 +102,11 @@ def main():
                 "results": done,
             }, out_path)
 
-        for i, (item, domain) in enumerate(safe[len(done):], start=len(done)):
+        previous, done = done, []
+        for i, (item, domain) in enumerate(safe):
+            if i < len(previous) and "error" not in previous[i]:
+                done.append(previous[i])
+                continue
             try:
                 done.append(score_response(item, domain, retriever, nli, claim_filter, args.top_k))
             except Exception as e:  # keep long runs alive; the item is recorded as unscored
