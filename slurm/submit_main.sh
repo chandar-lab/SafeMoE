@@ -15,6 +15,20 @@ c = load_config(sys.argv[1]); print(c.name, c.model.base_model, c.model.experts_
 mapfile -t experts < <(python -c "
 import sys; from safemoe.constants import expert_names; from safemoe.utils import load_config
 for n in expert_names(load_config(sys.argv[1]).model.experts): print(n)" "$config")
+python - "$config" <<'PY'
+import sys
+from safemoe.constants import expert_names, pku_key
+from safemoe.utils import load_config
+
+config = load_config(sys.argv[1])
+if config.name in {"safe_only", "refusal_only"} or config.name.startswith("router_only_random_"):
+    raise SystemExit(f"{config.name} requires a non-PKU expert recipe; refusing to submit jobs")
+for category in expert_names(config.model.experts):
+    try:
+        pku_key(category)
+    except KeyError:
+        raise SystemExit(f"{config.name} includes non-PKU expert {category!r}; refusing to submit jobs")
+PY
 
 extra=()
 [[ "$base" == Qwen/* ]] && extra=(--base_model "$base" --loss_on completion)
