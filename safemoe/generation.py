@@ -22,7 +22,13 @@ def resolve_checkpoint(path):
     for marker in ("adapter_config.json", "config.json"):
         if os.path.isfile(os.path.join(path, marker)):
             return path
-    checkpoints = sorted(glob.glob(os.path.join(path, "checkpoint-*")), key=lambda p: int(p.rsplit("-", 1)[-1]))
+    final_path = os.path.join(path, "final")
+    if os.path.isfile(os.path.join(final_path, "config.json")):
+        return final_path
+    checkpoints = sorted(
+        glob.glob(os.path.join(path, "checkpoint-*")) + glob.glob(os.path.join(path, "step-*")),
+        key=lambda p: int(p.rsplit("-", 1)[-1]),
+    )
     if not checkpoints:
         raise FileNotFoundError(f"no model or checkpoint under {path}")
     state_path = os.path.join(checkpoints[-1], "trainer_state.json")
