@@ -1,0 +1,7 @@
+# Refusal-Only control (Table 2): 4 experts trained on the same prompts with
+# every response replaced by a fixed refusal (finetune.py --replace_response).
+defaults: base.yaml
+name: refusal_only
+model:
+  experts_dir: checkpoints/experts/mistral_refusal
+  experts: "4"

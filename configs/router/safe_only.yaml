@@ -1,0 +1,7 @@
+# Safe-Only control (Table 2): one expert per safe-data category trained on its
+# safe-informative responses (8,000 in total), router trained as usual.
+defaults: base.yaml
+name: safe_only
+model:
+  experts_dir: checkpoints/experts/mistral_safe
+  experts: "4"

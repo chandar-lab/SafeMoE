@@ -1,0 +1,36 @@
+# Python 3.10, CUDA 12.x. Exact versions the code was tested with.
+
+# core: experts, routers, generation
+torch==2.7.1
+transformers==4.46.3
+tokenizers==0.20.3
+peft==0.14.0
+accelerate==1.7.0
+datasets==3.6.0
+huggingface-hub==0.34.4
+safetensors==0.4.5
+sentencepiece==0.2.0
+protobuf==4.25.9
+numpy==2.2.6
+omegaconf==2.3.0
+
+# LLM judge, GPT-4 data collection, PAIR, OpenAI Moderation
+openai==2.30.0
+anthropic==0.64.0
+
+# unlearning baseline (multi-GPU)
+deepspeed==0.15.4
+
+# evaluation and analysis
+pandas==2.3.0
+scipy==1.15.3
+matplotlib==3.10.3
+requests==2.32.4
+rank-bm25==0.2.2
+rouge_score==0.1.2
+nltk==3.9.4
+alpaca_eval==0.6.6
+pdfplumber==0.11.9
+
+# tests
+pytest

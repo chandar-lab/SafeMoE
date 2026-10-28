@@ -1,0 +1,5 @@
+# Knowledge-Only control (Table 2): 4 benign knowledge experts.
+defaults: base.yaml
+name: knowledge_only
+model:
+  experts: [pubmedqa, cybersecurity_qa, fiqa, mental_health]

@@ -1,0 +1,6 @@
+# SafeMoE on the safety-aligned Qwen2.5-3B-Instruct (Appendix R).
+defaults: safemoe_qwen.yaml
+name: safemoe_qwen_instruct
+model:
+  base_model: Qwen/Qwen2.5-3B-Instruct
+  experts_dir: checkpoints/experts/qwen_instruct

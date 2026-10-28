@@ -1,0 +1,5 @@
+# SafeMoE-L: 10 unsafe experts (Table 1).
+defaults: base.yaml
+name: safemoe_l
+model:
+  experts: L

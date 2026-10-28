@@ -1,0 +1,8 @@
+# Router-only with 18 frozen, randomly initialised experts (Table 9).
+defaults: base.yaml
+name: router_only_random_18
+model:
+  experts_dir: checkpoints/experts/mistral_random
+  experts: XL
+  num_experts_per_tok: 1
+  trainable: router

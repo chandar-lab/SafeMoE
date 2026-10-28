@@ -1,0 +1,5 @@
+# SafeMoE-4: 4 unsafe experts (Table 1).
+defaults: base.yaml
+name: safemoe_4
+model:
+  experts: "4"

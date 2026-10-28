@@ -1,0 +1,17 @@
+# data, checkpoints, results, logs
+/data/
+/checkpoints/
+/results/
+/runs/
+/logs/*
+!/logs/.gitkeep
+wandb/
+*.safetensors
+*.bin
+*.pt
+# python
+__pycache__/
+*.pyc
+*.egg-info/
+build/
+.ipynb_checkpoints/
