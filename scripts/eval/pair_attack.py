@@ -139,7 +139,7 @@ class AttackLM:
             outputs[i] = {"improvement": "Failed to generate", "prompt": prompts[i]}
             json_strs[i] = json.dumps(outputs[i])
         for conv, json_str in zip(convs, json_strs):
-            conv.update_last(json_str)
+            conv.append(conv.roles[1], json_str)
         return outputs
 
 
